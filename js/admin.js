@@ -83,15 +83,314 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ==========================================
-  // 2. Thiết lập các nút chọn nhanh giờ học
+  // 2. BỘ CHỌN THỜI GIAN KIỂU IPHONE (IOS WHEEL PICKER)
   // ==========================================
-  window.setQuickTime = function(timeStr) {
-    const timeInput = document.getElementById("time-val");
-    if (timeInput) {
-      timeInput.value = timeStr;
-      timeInput.focus();
+  let startTime = "07:00";
+  let endTime = "11:30";
+  let tempStartTime = "07:00";
+  let tempEndTime = "11:30";
+  let pickerTarget = "start"; // 'start' (Từ) hoặc 'end' (Đến)
+  let wheelsInitialized = false;
+
+  const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+  // Bước nhảy 5 phút, không số lẻ: 00, 05, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55
+  const MINUTES = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
+  const ITEM_HEIGHT = 44;
+
+  // Đồng bộ giao diện 2 khung Từ - Đến và input ẩn
+  function syncTimeUI() {
+    const displayStart = document.getElementById("display-time-start");
+    const displayEnd = document.getElementById("display-time-end");
+    const timeVal = document.getElementById("time-val");
+
+    if (displayStart) displayStart.textContent = startTime;
+    if (displayEnd) displayEnd.textContent = endTime;
+    if (timeVal) timeVal.value = `${startTime} - ${endTime}`;
+  }
+
+  // Chuẩn hóa và bóc tách chuỗi thời gian
+  function parseTimeStr(timeStr) {
+    if (!timeStr) return { start: "07:00", end: "11:30" };
+    const parts = timeStr.split("-").map(s => s.trim());
+    let s = parts[0] || "07:00";
+    let e = parts[1] || "";
+
+    s = normalizeTimeSegment(s, "07:00");
+    if (!e) {
+      e = "11:30";
+    } else {
+      e = normalizeTimeSegment(e, "11:30");
+    }
+    return { start: s, end: e };
+  }
+
+  function normalizeTimeSegment(str, fallback) {
+    const match = str.match(/^(\d{1,2})[:hH](\d{1,2})$/);
+    if (!match) return fallback;
+    let h = parseInt(match[1], 10);
+    let m = parseInt(match[2], 10);
+    if (isNaN(h) || h < 0 || h > 23) h = 7;
+    // Làm tròn phút về bội số gần nhất của 5 (0, 5, 10, 15... không lẻ)
+    m = Math.round(m / 5) * 5;
+    if (m >= 60) m = 55;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+
+  // Khởi tạo các cột bánh xe (chỉ tạo 1 lần)
+  function initWheels() {
+    if (wheelsInitialized) return;
+    const hourCol = document.getElementById("wheel-col-hour");
+    const minCol = document.getElementById("wheel-col-minute");
+    if (!hourCol || !minCol) return;
+
+    hourCol.innerHTML = "";
+    minCol.innerHTML = "";
+
+    HOURS.forEach((h, idx) => {
+      const el = document.createElement("div");
+      el.className = "ios-wheel-item";
+      el.textContent = h;
+      el.dataset.index = idx;
+      el.addEventListener("click", () => {
+        hourCol.scrollTo({ top: idx * ITEM_HEIGHT, behavior: "smooth" });
+      });
+      hourCol.appendChild(el);
+    });
+
+    MINUTES.forEach((m, idx) => {
+      const el = document.createElement("div");
+      el.className = "ios-wheel-item";
+      el.textContent = m;
+      el.dataset.index = idx;
+      el.addEventListener("click", () => {
+        minCol.scrollTo({ top: idx * ITEM_HEIGHT, behavior: "smooth" });
+      });
+      minCol.appendChild(el);
+    });
+
+    attachWheelScrollListener(hourCol, "hour");
+    attachWheelScrollListener(minCol, "minute");
+
+    enableDesktopWheelDrag(hourCol, "hour");
+    enableDesktopWheelDrag(minCol, "minute");
+
+    wheelsInitialized = true;
+  }
+
+  function updateSelectedClasses(col, activeIndex) {
+    const items = col.querySelectorAll(".ios-wheel-item");
+    items.forEach((it, i) => {
+      if (i === activeIndex) {
+        it.classList.add("selected");
+      } else {
+        it.classList.remove("selected");
+      }
+    });
+  }
+
+  let isProgrammaticScroll = false;
+  let programmaticTimer;
+
+  function attachWheelScrollListener(col, type) {
+    let scrollTimeout;
+    col.addEventListener("scroll", () => {
+      const scrollTop = col.scrollTop;
+      const index = Math.round(scrollTop / ITEM_HEIGHT);
+      const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
+      const clampedIndex = Math.max(0, Math.min(itemsCount - 1, index));
+
+      updateSelectedClasses(col, clampedIndex);
+
+      if (!isProgrammaticScroll) {
+        const val = (type === "hour") ? HOURS[clampedIndex] : MINUTES[clampedIndex];
+        onWheelValueChanged(type, val);
+      }
+
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        if (!isProgrammaticScroll) {
+          const snapTop = clampedIndex * ITEM_HEIGHT;
+          if (Math.abs(col.scrollTop - snapTop) > 1) {
+            col.scrollTo({ top: snapTop, behavior: "smooth" });
+          }
+        }
+      }, 120);
+    }, { passive: true });
+  }
+
+  function onWheelValueChanged(type, val) {
+    const curVal = (pickerTarget === "start") ? tempStartTime : tempEndTime;
+    const parts = curVal.split(":");
+    let h = parts[0] || "07";
+    let m = parts[1] || "00";
+
+    if (type === "hour") {
+      h = val;
+    } else {
+      m = val;
+    }
+
+    const newTime = `${h}:${m}`;
+    if (pickerTarget === "start") {
+      tempStartTime = newTime;
+      const segStart = document.getElementById("segment-val-start");
+      if (segStart) segStart.textContent = tempStartTime;
+    } else {
+      tempEndTime = newTime;
+      const segEnd = document.getElementById("segment-val-end");
+      if (segEnd) segEnd.textContent = tempEndTime;
+    }
+  }
+
+  function enableDesktopWheelDrag(col, type) {
+    let isDown = false;
+    let startY = 0;
+    let startScrollTop = 0;
+
+    col.addEventListener("mousedown", (e) => {
+      isDown = true;
+      startY = e.pageY;
+      startScrollTop = col.scrollTop;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const walk = e.pageY - startY;
+      col.scrollTop = startScrollTop - walk;
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!isDown) return;
+      isDown = false;
+      const index = Math.round(col.scrollTop / ITEM_HEIGHT);
+      const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
+      const clampedIndex = Math.max(0, Math.min(itemsCount - 1, index));
+      col.scrollTo({ top: clampedIndex * ITEM_HEIGHT, behavior: "smooth" });
+    });
+  }
+
+  // Đặt vị trí 2 bánh xe theo giờ & phút
+  function setWheelsToTime(timeStr, smooth = false) {
+    initWheels();
+    const [h, m] = (timeStr || "07:00").split(":");
+    let hourIndex = HOURS.indexOf(h);
+    if (hourIndex === -1) hourIndex = 7;
+
+    let minIndex = MINUTES.indexOf(m);
+    if (minIndex === -1) {
+      const mNum = parseInt(m, 10) || 0;
+      const roundedM = String(Math.round(mNum / 5) * 5).padStart(2, "0");
+      minIndex = MINUTES.indexOf(roundedM);
+      if (minIndex === -1) minIndex = 0;
+    }
+
+    const hourCol = document.getElementById("wheel-col-hour");
+    const minCol = document.getElementById("wheel-col-minute");
+
+    isProgrammaticScroll = true;
+    clearTimeout(programmaticTimer);
+
+    requestAnimationFrame(() => {
+      if (hourCol) {
+        hourCol.scrollTo({ top: hourIndex * ITEM_HEIGHT, behavior: smooth ? "smooth" : "auto" });
+        updateSelectedClasses(hourCol, hourIndex);
+      }
+      if (minCol) {
+        minCol.scrollTo({ top: minIndex * ITEM_HEIGHT, behavior: smooth ? "smooth" : "auto" });
+        updateSelectedClasses(minCol, minIndex);
+      }
+      programmaticTimer = setTimeout(() => {
+        isProgrammaticScroll = false;
+      }, smooth ? 350 : 100);
+    });
+  }
+
+  // Mở modal xoay chọn thời gian
+  window.openTimePickerModal = function(target = "start") {
+    initWheels();
+    pickerTarget = target;
+    tempStartTime = startTime;
+    tempEndTime = endTime;
+
+    const modal = document.getElementById("ios-time-modal-backdrop");
+    if (!modal) return;
+
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; // Làm tối toàn màn hình và khóa cuộn trang
+
+    updatePickerModalUI();
+  };
+
+  // Chuyển đổi tab TỪ / ĐẾN trong modal
+  window.switchPickerTarget = function(target) {
+    pickerTarget = target;
+    updatePickerModalUI(true);
+  };
+
+  function updatePickerModalUI(smooth = false) {
+    const title = document.getElementById("ios-picker-title");
+    const tabStart = document.getElementById("tab-start");
+    const tabEnd = document.getElementById("tab-end");
+    const segStart = document.getElementById("segment-val-start");
+    const segEnd = document.getElementById("segment-val-end");
+
+    if (segStart) segStart.textContent = tempStartTime;
+    if (segEnd) segEnd.textContent = tempEndTime;
+
+    if (pickerTarget === "start") {
+      if (title) title.textContent = "Chỉnh Giờ Bắt Đầu (Từ)";
+      if (tabStart) tabStart.classList.add("active");
+      if (tabEnd) tabEnd.classList.remove("active");
+      setWheelsToTime(tempStartTime, smooth);
+    } else {
+      if (title) title.textContent = "Chỉnh Giờ Kết Thúc (Đến)";
+      if (tabStart) tabStart.classList.remove("active");
+      if (tabEnd) tabEnd.classList.add("active");
+      setWheelsToTime(tempEndTime, smooth);
+    }
+  }
+
+  // Đóng modal (Lưu hoặc Hủy)
+  window.closeTimePickerModal = function(apply = true) {
+    const modal = document.getElementById("ios-time-modal-backdrop");
+    if (modal) modal.classList.remove("show");
+    document.body.style.overflow = "";
+
+    if (apply) {
+      startTime = tempStartTime;
+      endTime = tempEndTime;
+      syncTimeUI();
     }
   };
+
+  // Nhấn vào vùng tối bên ngoài modal để đóng và lưu
+  window.handleBackdropClick = function(e) {
+    if (e.target.id === "ios-time-modal-backdrop") {
+      closeTimePickerModal(true);
+    }
+  };
+
+  // Bắt phím Escape để đóng modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const modal = document.getElementById("ios-time-modal-backdrop");
+      if (modal && modal.classList.contains("show")) {
+        closeTimePickerModal(false);
+      }
+    }
+  });
+
+  // Thiết lập các nút chọn nhanh giờ học
+  window.setQuickTime = function(timeStr) {
+    const parsed = parseTimeStr(timeStr);
+    startTime = parsed.start;
+    endTime = parsed.end;
+    syncTimeUI();
+  };
+
+  // Đồng bộ UI ban đầu
+  syncTimeUI();
 
   // ==========================================
   // 3. Khởi tạo thanh lọc ngày trong danh sách
@@ -201,9 +500,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("edit-cancel-wrap").style.display = "none";
 
     document.getElementById("subject-val").value = "";
-    document.getElementById("time-val").value = "";
     document.getElementById("room-val").value = "";
     document.getElementById("note-val").value = "";
+    startTime = "07:00";
+    endTime = "11:30";
+    syncTimeUI();
   };
 
   // ==========================================
@@ -219,7 +520,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Điền dữ liệu vào form
     document.getElementById("day-val").value = day;
-    document.getElementById("time-val").value = item.time || "";
+    const parsed = parseTimeStr(item.time || "");
+    startTime = parsed.start;
+    endTime = parsed.end;
+    syncTimeUI();
+
     document.getElementById("subject-val").value = item.subject || "";
     document.getElementById("room-val").value = item.room || "";
     document.getElementById("note-val").value = item.note || "";

@@ -527,3 +527,399 @@ input:focus, select:focus, textarea:focus {
   20%, 60% { transform: translateX(-8px); }
   40%, 80% { transform: translateX(8px); }
 }
+
+/* =========================================
+   BỘ CHỌN THỜI GIAN 2 KHUNG (TỪ - ĐẾN)
+   ========================================= */
+.time-picker-dual-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.time-box-item {
+  flex: 1;
+  min-width: 0;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.time-box-item:hover {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.time-box-item:active {
+  transform: scale(0.98);
+}
+
+.time-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time-box-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.start-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.end-badge {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.time-box-subtext {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.time-box-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time-digits {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.time-box-icon {
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.time-box-item:hover .time-box-icon {
+  color: var(--primary);
+}
+
+.time-box-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   MODAL XOAY THỜI GIAN KIỂU IPHONE (IOS WHEEL)
+   ========================================= */
+.ios-time-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ios-time-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ios-time-sheet {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px 24px 0 0;
+  padding: 18px 20px 24px;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ios-time-backdrop.show .ios-time-sheet {
+  transform: translateY(0);
+}
+
+@media (min-width: 640px) {
+  .ios-time-backdrop {
+    align-items: center;
+  }
+  .ios-time-sheet {
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ios-time-backdrop.show .ios-time-sheet {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ios-time-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ios-sheet-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.ios-btn-text {
+  background: none;
+  border: none;
+  font-size: 0.98rem;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.ios-btn-cancel {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ios-btn-cancel:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ios-btn-done {
+  color: #007aff;
+  font-weight: 700;
+}
+
+.ios-btn-done:hover {
+  background: #eff6ff;
+  color: #0056b3;
+}
+
+.ios-btn-text:active {
+  transform: scale(0.96);
+}
+
+/* SEGMENTED CONTROL TỪ / ĐẾN */
+.ios-segmented-control {
+  display: flex;
+  background: #e2e8f0;
+  padding: 3px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  gap: 4px;
+}
+
+.ios-segment-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.ios-segment-tab.active {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.segment-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.ios-segment-tab.active .segment-label {
+  color: #007aff;
+}
+
+.segment-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* KHUNG BÁNH XE XOAY IPHONE */
+.ios-wheel-container {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Kính lúp highlight ở giữa (lens) */
+.ios-wheel-lens {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 12px;
+  right: 12px;
+  height: 44px;
+  background: rgba(0, 122, 255, 0.07);
+  border-top: 1.5px solid rgba(0, 122, 255, 0.22);
+  border-bottom: 1.5px solid rgba(0, 122, 255, 0.22);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Gradient làm mờ trên và dưới tạo chiều sâu 3D */
+.ios-wheel-gradient-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, #f8fafc 20%, rgba(248, 250, 252, 0) 100%);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.ios-wheel-gradient-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, #f8fafc 20%, rgba(248, 250, 252, 0) 100%);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* Cột bánh xe */
+.ios-wheel-col-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px;
+  height: 100%;
+  position: relative;
+}
+
+.ios-col-label {
+  position: absolute;
+  top: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.ios-wheel-col {
+  width: 100%;
+  height: 220px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  box-sizing: border-box;
+  padding-top: 88px;
+  padding-bottom: 88px;
+  cursor: grab;
+}
+
+.ios-wheel-col:active {
+  cursor: grabbing;
+}
+
+.ios-wheel-col::-webkit-scrollbar {
+  display: none;
+}
+
+.ios-wheel-item {
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #94a3b8;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  opacity: 0.35;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-wheel-item.selected {
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 1.6rem;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.ios-wheel-divider {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  align-self: center;
+  margin-top: 4px;
+  z-index: 7;
+  user-select: none;
+}
+
+.ios-wheel-footer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+  text-align: center;
+}

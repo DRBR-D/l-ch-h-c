@@ -122,19 +122,62 @@
           </div>
 
           <div class="form-group">
-            <label for="time-val">
+            <label>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
-              Thời Gian:
+              Thời Gian Học:
             </label>
-            <input 
-              type="text" 
-              id="time-val" 
-              placeholder="VD: 07:00 - 11:30 hoặc 13:30 - 17:00" 
-              required
-            >
+
+            <!-- 2 KHUNG THỜI GIAN: TỪ - ĐẾN -->
+            <div class="time-picker-dual-card">
+              <!-- KHUNG TỪ -->
+              <div class="time-box-item" id="time-box-start" onclick="openTimePickerModal('start')" title="Nhấn để chỉnh giờ bắt đầu (Từ)">
+                <div class="time-box-header">
+                  <span class="time-box-badge start-badge">TỪ</span>
+                  <span class="time-box-subtext">Giờ bắt đầu</span>
+                </div>
+                <div class="time-box-display">
+                  <span class="time-digits" id="display-time-start">07:00</span>
+                  <span class="time-box-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- MŨI TÊN NGĂN CÁCH -->
+              <div class="time-box-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+
+              <!-- KHUNG ĐẾN -->
+              <div class="time-box-item" id="time-box-end" onclick="openTimePickerModal('end')" title="Nhấn để chỉnh giờ kết thúc (Đến)">
+                <div class="time-box-header">
+                  <span class="time-box-badge end-badge">ĐẾN</span>
+                  <span class="time-box-subtext">Giờ kết thúc</span>
+                </div>
+                <div class="time-box-display">
+                  <span class="time-digits" id="display-time-end">11:30</span>
+                  <span class="time-box-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input ẩn đồng bộ giá trị với Firebase và Form -->
+            <input type="hidden" id="time-val" value="07:00 - 11:30" required>
+
             <!-- Gợi ý chọn nhanh -->
             <div class="time-presets">
               <span class="preset-chip" onclick="setQuickTime('07:00 - 11:30')">Ca Sáng (07:00 - 11:30)</span>
@@ -242,6 +285,68 @@
       </section>
     </div>
 
+  </div>
+
+  <!-- =========================================
+       MODAL XOAY CHỌN THỜI GIAN KIỂU IPHONE
+       ========================================= -->
+  <div id="ios-time-modal-backdrop" class="ios-time-backdrop" onclick="handleBackdropClick(event)">
+    <div class="ios-time-sheet" id="ios-time-sheet" onclick="event.stopPropagation()">
+      <!-- Thanh điều hướng modal chuẩn iOS -->
+      <div class="ios-time-sheet-header">
+        <button type="button" class="ios-btn-text ios-btn-cancel" onclick="closeTimePickerModal(false)">Hủy</button>
+        <div class="ios-sheet-title" id="ios-picker-title">Chỉnh Giờ Học</div>
+        <button type="button" class="ios-btn-text ios-btn-done" onclick="closeTimePickerModal(true)">Xong</button>
+      </div>
+
+      <!-- Segmented Control chuyển đổi TỪ / ĐẾN ngay trong modal -->
+      <div class="ios-segmented-control">
+        <button type="button" id="tab-start" class="ios-segment-tab active" onclick="switchPickerTarget('start')">
+          <span class="segment-label">Từ</span>
+          <span class="segment-val" id="segment-val-start">07:00</span>
+        </button>
+        <button type="button" id="tab-end" class="ios-segment-tab" onclick="switchPickerTarget('end')">
+          <span class="segment-label">Đến</span>
+          <span class="segment-val" id="segment-val-end">11:30</span>
+        </button>
+      </div>
+
+      <!-- Bánh xe xoay thời gian iOS (Giờ | Phút) -->
+      <div class="ios-wheel-container">
+        <!-- Vạch kính lúp highlight ở giữa -->
+        <div class="ios-wheel-lens"></div>
+        <div class="ios-wheel-gradient-top"></div>
+        <div class="ios-wheel-gradient-bottom"></div>
+
+        <!-- Cột Giờ -->
+        <div class="ios-wheel-col-wrapper">
+          <div class="ios-col-label">GIỜ</div>
+          <div class="ios-wheel-col" id="wheel-col-hour">
+            <!-- 00 .. 23 -->
+          </div>
+        </div>
+
+        <!-- Dấu hai chấm phân cách -->
+        <div class="ios-wheel-divider">:</div>
+
+        <!-- Cột Phút: bước nhảy 5 phút (00, 05, 10, 15, ... 55 ko số lẻ) -->
+        <div class="ios-wheel-col-wrapper">
+          <div class="ios-col-label">PHÚT</div>
+          <div class="ios-wheel-col" id="wheel-col-minute">
+            <!-- 00, 05, 10, ... 55 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Gợi ý thao tác thân thiện -->
+      <div class="ios-wheel-footer-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Cuộn bánh xe hoặc chạm trực tiếp vào số
+      </div>
+    </div>
   </div>
 
   <!-- CẤU HÌNH & CODE JS -->
