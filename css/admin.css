@@ -247,30 +247,80 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/* Quick time helper badges */
+/* Quick time presets */
 .time-presets {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 
 .preset-chip {
-  font-size: 0.78rem;
-  background: var(--bg-color);
-  border: 1px solid var(--card-border);
-  color: var(--text-muted);
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
+  font-family: inherit;
+  outline: none;
+}
+
+.preset-chip svg {
+  color: #64748b;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
 }
 
 .preset-chip:hover {
   background: var(--primary-soft);
   color: var(--primary);
   border-color: var(--primary-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.12);
+}
+
+.preset-chip:hover svg {
+  color: var(--primary);
+}
+
+.preset-chip.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #2563eb;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.preset-chip.active svg {
+  color: #2563eb;
+}
+
+.preset-chip:active {
+  transform: scale(0.96) translateY(0);
+}
+
+@keyframes timeBoxPulse {
+  0% {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+.time-box-pulse {
+  animation: timeBoxPulse 0.5s ease-out forwards;
 }
 
 /* NÚT THAO TÁC FORM */
@@ -782,6 +832,46 @@ input:focus, select:focus, textarea:focus {
   font-variant-numeric: tabular-nums;
 }
 
+/* Phím chọn nhanh phút */
+.ios-quick-minutes-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quick-min-label {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.quick-min-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.quick-min-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+}
+
+.quick-min-btn:active {
+  transform: scale(0.95);
+}
+
 /* KHUNG BÁNH XE XOAY IPHONE */
 .ios-wheel-container {
   position: relative;
@@ -792,8 +882,8 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   background: #f8fafc;
   border-radius: 16px;
-  margin-bottom: 12px;
-  border: 1px solid #e2e8f0;
+  margin-bottom: 10px;
+  border: 1.5px solid #e2e8f0;
 }
 
 /* Kính lúp highlight ở giữa (lens) */
@@ -801,12 +891,12 @@ input:focus, select:focus, textarea:focus {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 12px;
-  right: 12px;
+  left: 10px;
+  right: 10px;
   height: 44px;
-  background: rgba(0, 122, 255, 0.07);
-  border-top: 1.5px solid rgba(0, 122, 255, 0.22);
-  border-bottom: 1.5px solid rgba(0, 122, 255, 0.22);
+  background: rgba(37, 99, 235, 0.08);
+  border-top: 1.5px solid rgba(37, 99, 235, 0.28);
+  border-bottom: 1.5px solid rgba(37, 99, 235, 0.28);
   border-radius: 10px;
   pointer-events: none;
   z-index: 5;
@@ -868,6 +958,7 @@ input:focus, select:focus, textarea:focus {
   padding-top: 88px;
   padding-bottom: 88px;
   cursor: grab;
+  user-select: none;
 }
 
 .ios-wheel-col:active {
@@ -883,16 +974,19 @@ input:focus, select:focus, textarea:focus {
   line-height: 44px;
   text-align: center;
   font-size: 1.35rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #94a3b8;
   scroll-snap-align: center;
   scroll-snap-stop: always;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.15s ease,
+              opacity 0.15s ease;
   opacity: 0.35;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
+  will-change: transform, opacity;
 }
 
 .ios-wheel-item.selected {
@@ -900,7 +994,7 @@ input:focus, select:focus, textarea:focus {
   font-weight: 800;
   font-size: 1.6rem;
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .ios-wheel-divider {
@@ -913,15 +1007,63 @@ input:focus, select:focus, textarea:focus {
   user-select: none;
 }
 
+/* Chọn nhanh ca học ngay trong Modal */
+.ios-modal-presets {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  text-align: center;
+}
+
+.modal-presets-title {
+  display: block;
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.modal-presets-chips {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.modal-preset-chip {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.modal-preset-chip:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.modal-preset-chip:active {
+  transform: scale(0.96);
+}
+
 .ios-wheel-footer-hint {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: #94a3b8;
   font-weight: 500;
   text-align: center;
+  margin-top: 8px;
 }
 
 /* =========================================================
@@ -1376,4 +1518,219 @@ input:focus, select:focus, textarea:focus {
   vertical-align: middle;
   font-family: ui-monospace, SFMono-Regular, monospace;
   letter-spacing: 0.4px;
+}
+
+/* =========================================================
+   BỘ CHỌN PHÒNG HỌC NHANH (TÒA A, B, C, E, F • 0-10 • 0-20)
+   ========================================================= */
+
+.quick-room-container {
+  margin-top: 10px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.quick-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.quick-room-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.quick-room-title svg {
+  color: #2563eb;
+}
+
+.btn-clear-room {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-clear-room:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+/* Hàng chọn Tòa */
+.room-builder-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.builder-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.builder-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  min-width: 32px;
+}
+
+.building-button-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.bld-btn {
+  flex: 1;
+  min-width: 50px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  user-select: none;
+}
+
+.bld-btn:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  color: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12);
+}
+
+.bld-btn.active {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.bld-btn:active {
+  transform: scale(0.96) translateY(0);
+}
+
+/* Hàng chọn 2 số */
+.builder-numbers-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.num-picker-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.num-picker-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.stepper-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.step-btn {
+  width: 34px;
+  height: 36px;
+  border: none;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  font-family: inherit;
+}
+
+.step-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.step-btn:active {
+  background: #cbd5e1;
+}
+
+.num-select {
+  flex: 1;
+  height: 36px;
+  border: none;
+  background: #ffffff;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 0 4px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align-last: center;
+}
+
+.num-select:focus {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.num-dot-separator {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #2563eb;
+  padding: 0 4px;
+  margin-top: 14px;
+  user-select: none;
 }

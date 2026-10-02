@@ -139,7 +139,7 @@
                   <span class="time-box-subtext">Giờ bắt đầu</span>
                 </div>
                 <div class="time-box-display">
-                  <span class="time-digits" id="display-time-start">07:00</span>
+                  <span class="time-digits" id="display-time-start">06:30</span>
                   <span class="time-box-icon">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -164,7 +164,7 @@
                   <span class="time-box-subtext">Giờ kết thúc</span>
                 </div>
                 <div class="time-box-display">
-                  <span class="time-digits" id="display-time-end">11:30</span>
+                  <span class="time-digits" id="display-time-end">11:00</span>
                   <span class="time-box-icon">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -176,13 +176,37 @@
             </div>
 
             <!-- Input ẩn đồng bộ giá trị với Firebase và Form -->
-            <input type="hidden" id="time-val" value="07:00 - 11:30" required>
+            <input type="hidden" id="time-val" value="06:30 - 11:00" required>
 
-            <!-- Gợi ý chọn nhanh -->
-            <div class="time-presets">
-              <span class="preset-chip" onclick="setQuickTime('06:30 - 11:00')">Ca Sáng (07:00 - 11:30)</span>
-              <span class="preset-chip" onclick="setQuickTime('12:30 - 14:30')">Ca Chiều (13:00 - 17:00)</span>
-              <span class="preset-chip" onclick="setQuickTime('18:00 - 20:00')">Ca Tối (18:00 - 21:00)</span>
+            <!-- Gợi ý chọn nhanh các ca học -->
+            <div class="time-presets" id="time-presets-bar">
+              <button type="button" class="preset-chip active" data-time="06:30 - 11:00" onclick="setQuickTime('06:30 - 11:00')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <span>Ca Sáng (06:30 - 11:00)</span>
+              </button>
+              <button type="button" class="preset-chip" data-time="12:30 - 14:30" onclick="setQuickTime('12:30 - 14:30')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Ca Chiều (12:30 - 14:30)</span>
+              </button>
+              <button type="button" class="preset-chip" data-time="18:00 - 20:00" onclick="setQuickTime('18:00 - 20:00')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span>Ca Tối (18:00 - 20:00)</span>
+              </button>
             </div>
           </div>
 
@@ -197,7 +221,7 @@
             <input 
               type="text" 
               id="subject-val" 
-              placeholder="VD: Toán rời rạc, Thực hành mạng..." 
+              placeholder="Tên môn học / hoạt động..." 
               required
             >
 
@@ -237,8 +261,71 @@
             <input 
               type="text" 
               id="room-val" 
-              placeholder="VD: Phòng F3.2, Xưởng Cơ Điện, Giảng đường A..."
+              placeholder="Phòng học (chọn bên dưới hoặc nhập tay)..."
             >
+
+            <!-- BỘ CHỌN PHÒNG HỌC (TÒA A B C E F • SỐ 0-10 • SỐ 0-20) -->
+            <div class="quick-room-container">
+              <div class="quick-room-header">
+                <div class="quick-room-title">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                  <span>Chọn phòng học</span>
+                </div>
+                <div class="quick-room-actions">
+                  <button type="button" class="btn-clear-room" onclick="clearRoomValue()" title="Xóa phòng học">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Xóa
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hàng chọn Tòa: A, B, C, E, F -->
+              <div class="room-builder-section">
+                <div class="builder-row">
+                  <span class="builder-label">Tòa:</span>
+                  <div class="building-button-group">
+                    <button type="button" class="bld-btn" data-bld="A" onclick="setRoomBuilding('A')">Tòa A</button>
+                    <button type="button" class="bld-btn" data-bld="B" onclick="setRoomBuilding('B')">Tòa B</button>
+                    <button type="button" class="bld-btn" data-bld="C" onclick="setRoomBuilding('C')">Tòa C</button>
+                    <button type="button" class="bld-btn" data-bld="E" onclick="setRoomBuilding('E')">Tòa E</button>
+                    <button type="button" class="bld-btn" data-bld="F" onclick="setRoomBuilding('F')">Tòa F</button>
+                  </div>
+                </div>
+
+                <!-- Hàng chọn 2 số: Số 1 (0-10) và Số 2 (0-20) -->
+                <div class="builder-numbers-row">
+                  <div class="num-picker-col">
+                    <span class="num-picker-label">Số 1 (0 - 10)</span>
+                    <div class="stepper-wrap">
+                      <button type="button" class="step-btn" onclick="stepRoomNumber(1, -1)">−</button>
+                      <select id="room-num1-select" class="num-select" onchange="onRoomNumberChange()">
+                        <!-- Render qua JS 0..10 -->
+                      </select>
+                      <button type="button" class="step-btn" onclick="stepRoomNumber(1, 1)">+</button>
+                    </div>
+                  </div>
+
+                  <div class="num-dot-separator">.</div>
+
+                  <div class="num-picker-col">
+                    <span class="num-picker-label">Số 2 (0 - 20)</span>
+                    <div class="stepper-wrap">
+                      <button type="button" class="step-btn" onclick="stepRoomNumber(2, -1)">−</button>
+                      <select id="room-num2-select" class="num-select" onchange="onRoomNumberChange()">
+                        <!-- Render qua JS 0..20 -->
+                      </select>
+                      <button type="button" class="step-btn" onclick="stepRoomNumber(2, 1)">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -255,7 +342,7 @@
             <input 
               type="text" 
               id="note-val" 
-              placeholder="VD: Mang đồ bảo hộ, nộp báo cáo, kiểm tra 15 phút..."
+              placeholder="Ghi chú thêm nếu có..."
             >
           </div>
 
@@ -327,12 +414,21 @@
       <div class="ios-segmented-control">
         <button type="button" id="tab-start" class="ios-segment-tab active" onclick="switchPickerTarget('start')">
           <span class="segment-label">Từ</span>
-          <span class="segment-val" id="segment-val-start">07:00</span>
+          <span class="segment-val" id="segment-val-start">06:30</span>
         </button>
         <button type="button" id="tab-end" class="ios-segment-tab" onclick="switchPickerTarget('end')">
           <span class="segment-label">Đến</span>
-          <span class="segment-val" id="segment-val-end">11:30</span>
+          <span class="segment-val" id="segment-val-end">11:00</span>
         </button>
+      </div>
+
+      <!-- Phím chọn nhanh phút tiện lợi (00, 15, 30, 45) -->
+      <div class="ios-quick-minutes-row">
+        <span class="quick-min-label">Chọn nhanh:</span>
+        <button type="button" class="quick-min-btn" onclick="setQuickMinute('00')">:00</button>
+        <button type="button" class="quick-min-btn" onclick="setQuickMinute('15')">:15</button>
+        <button type="button" class="quick-min-btn" onclick="setQuickMinute('30')">:30</button>
+        <button type="button" class="quick-min-btn" onclick="setQuickMinute('45')">:45</button>
       </div>
 
       <!-- Bánh xe xoay thời gian iOS (Giờ | Phút) -->
@@ -362,13 +458,23 @@
         </div>
       </div>
 
+      <!-- Chọn nhanh cả ca học ngay trong Modal -->
+      <div class="ios-modal-presets">
+        <span class="modal-presets-title">Hoặc chọn nhanh theo ca:</span>
+        <div class="modal-presets-chips">
+          <button type="button" class="modal-preset-chip" onclick="applyModalPreset('06:30', '11:00')">Ca Sáng (06:30 - 11:00)</button>
+          <button type="button" class="modal-preset-chip" onclick="applyModalPreset('12:30', '14:30')">Ca Chiều (12:30 - 14:30)</button>
+          <button type="button" class="modal-preset-chip" onclick="applyModalPreset('18:00', '20:00')">Ca Tối (18:00 - 20:00)</button>
+        </div>
+      </div>
+
       <!-- Gợi ý thao tác thân thiện -->
       <div class="ios-wheel-footer-hint">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        Cuộn bánh xe hoặc chạm trực tiếp vào số
+        Cuộn bánh xe, kéo thả chuột hoặc chạm trực tiếp vào số
       </div>
     </div>
   </div>
