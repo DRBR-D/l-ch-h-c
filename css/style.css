@@ -1,0 +1,502 @@
+/* =========================================================
+   STYLE.CSS - Giao diện Lịch Học & Hoạt Động (Dành Cho Gia Đình)
+   Phong cách: Tối giản, trang nhã, ấm cúng, rõ ràng, KHÔNG NEON
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Bảng màu trang nhã, êm dịu, dễ đọc cho phụ huynh */
+  --bg-color: #f6f8fb;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  
+  --primary: #1e40af;         /* Xanh đậm thanh lịch */
+  --primary-hover: #1e3a8a;
+  --primary-soft: #eff6ff;    /* Nền phụ dịu mắt */
+  --primary-border: #bfdbfe;
+  
+  --today-border: #2563eb;
+  --today-bg-header: #f8faff;
+  --today-tag-bg: #2563eb;
+  
+  --text-main: #0f172a;       /* Chữ đen đậm rõ nét */
+  --text-muted: #64748b;      /* Chữ phụ xám mềm */
+  --text-light: #94a3b8;
+  
+  --note-bg: #fffbeb;         /* Ghi chú màu vàng kem nhạt ấm cúng */
+  --note-border: #fde68a;
+  --note-text: #92400e;
+  
+  --room-bg: #f1f5f9;
+  --room-text: #334155;
+  
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-today: 0 6px 20px -2px rgba(37, 99, 235, 0.12), 0 2px 6px -1px rgba(37, 99, 235, 0.06);
+  
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px 12px 60px;
+}
+
+.page-wrapper {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   HEADER & THANH ĐIỀU HƯỚNG TRÊN CÙNG
+   ========================================= */
+.app-header {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 18px 16px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--primary-border);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.brand-badge svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* NÚT VÀO ADMIN */
+.btn-admin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  color: #334155;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-admin-link:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
+}
+
+.btn-admin-link svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.header-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+  margin-top: 4px;
+}
+
+.header-desc {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.live-time-box {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.live-clock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #a7f3d0;
+  font-size: 0.85rem;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+  display: inline-block;
+}
+
+/* THANH LỌC NHANH (TẤT CẢ / HÔM NAY) */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--card-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  flex-shrink: 0;
+  border: 1px solid var(--card-border);
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.tab-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 6px rgba(30, 64, 175, 0.25);
+}
+
+/* =========================================
+   DANH SÁCH LỊCH TRÌNH
+   ========================================= */
+.schedule-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* THẺ TỪNG NGÀY */
+.day-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* NỔI BẬT HÔM NAY - RÕ RÀNG NHƯNG KHÔNG CHÓI LÓA */
+.day-card.today {
+  border: 2px solid var(--today-border);
+  box-shadow: var(--shadow-today);
+  background: #ffffff;
+  position: relative;
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.day-card.today .day-header {
+  border-bottom-color: var(--primary-border);
+}
+
+.day-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.day-card.today .day-title {
+  color: var(--primary);
+}
+
+.today-tag {
+  background: var(--today-tag-bg);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.item-count-badge {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* MỤC TIẾT HỌC / HOẠT ĐỘNG */
+.schedule-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--card-border);
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--primary-border);
+}
+
+.time-badge svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.subject-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.meta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.92rem;
+  color: var(--room-text);
+  line-height: 1.4;
+}
+
+.meta-label {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.meta-item.room {
+  background: var(--room-bg);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  align-self: flex-start;
+  border: 1px solid #e2e8f0;
+}
+
+.meta-item.room .meta-label {
+  color: #1e40af;
+}
+
+.meta-item.note {
+  background: var(--note-bg);
+  border: 1px solid var(--note-border);
+  color: var(--note-text);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  line-height: 1.45;
+}
+
+.meta-item.note .meta-label {
+  color: #92400e;
+}
+
+.meta-value {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.meta-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* KHI KHÔNG CÓ TIẾT */
+.empty-day {
+  padding: 14px 6px 6px;
+  color: #64748b;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.empty-day svg {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+/* TRẠNG THÁI TẢI */
+.loading-box {
+  text-align: center;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  padding: 40px 20px;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* NÚT ADMIN NỔI Ở GÓC DƯỚI (DỄ BẤM TRÊN ĐIỆN THOẠI) */
+.floating-admin-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1e293b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.floating-admin-btn:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(30, 64, 175, 0.35);
+}
+
+.floating-admin-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* FOOTER DỊU DÀNG */
+.app-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  body {
+    padding: 10px 8px 70px;
+  }
+  .app-header {
+    padding: 16px 14px 14px;
+  }
+  .header-title {
+    font-size: 1.3rem;
+  }
+  .day-card {
+    padding: 14px 14px;
+  }
+  .day-title {
+    font-size: 1.05rem;
+  }
+}
