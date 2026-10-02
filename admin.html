@@ -422,13 +422,25 @@
         </button>
       </div>
 
-      <!-- Phím chọn nhanh phút tiện lợi (00, 15, 30, 45) -->
-      <div class="ios-quick-minutes-row">
-        <span class="quick-min-label">Chọn nhanh:</span>
-        <button type="button" class="quick-min-btn" onclick="setQuickMinute('00')">:00</button>
-        <button type="button" class="quick-min-btn" onclick="setQuickMinute('15')">:15</button>
-        <button type="button" class="quick-min-btn" onclick="setQuickMinute('30')">:30</button>
-        <button type="button" class="quick-min-btn" onclick="setQuickMinute('45')">:45</button>
+      <!-- Phím chọn nhanh giờ & phút tiện lợi -->
+      <div class="ios-quick-shortcuts">
+        <div class="quick-row">
+          <span class="quick-min-label">Giờ:</span>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('06')">06h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('07')">07h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('11')">11h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('12')">12h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('13')">13h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('17')">17h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('18')">18h</button>
+        </div>
+        <div class="quick-row">
+          <span class="quick-min-label">Phút:</span>
+          <button type="button" class="quick-min-btn" onclick="setQuickMinute('00')">:00</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickMinute('15')">:15</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickMinute('30')">:30</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickMinute('45')">:45</button>
+        </div>
       </div>
 
       <!-- Bánh xe xoay thời gian iOS (Giờ | Phút) -->
@@ -440,7 +452,11 @@
 
         <!-- Cột Giờ -->
         <div class="ios-wheel-col-wrapper">
-          <div class="ios-col-label">GIỜ</div>
+          <div class="ios-col-stepper-header">
+            <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('hour', -1)" title="Lùi 1 giờ">−</button>
+            <span class="ios-col-label">GIỜ</span>
+            <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('hour', 1)" title="Tăng 1 giờ">+</button>
+          </div>
           <div class="ios-wheel-col" id="wheel-col-hour">
             <!-- 00 .. 23 -->
           </div>
@@ -451,7 +467,11 @@
 
         <!-- Cột Phút: bước nhảy 5 phút (00, 05, 10, 15, ... 55 ko số lẻ) -->
         <div class="ios-wheel-col-wrapper">
-          <div class="ios-col-label">PHÚT</div>
+          <div class="ios-col-stepper-header">
+            <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('minute', -1)" title="Lùi 5 phút">−</button>
+            <span class="ios-col-label">PHÚT</span>
+            <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('minute', 1)" title="Tăng 5 phút">+</button>
+          </div>
           <div class="ios-wheel-col" id="wheel-col-minute">
             <!-- 00, 05, 10, ... 55 -->
           </div>

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thời Khóa Biểu Của Con</title>
-  <meta name="description" content="Thời khóa biểu học tập của con - Giao diện to rõ, ấm cúng, dễ đọc dành cho mẹ">
+  <title>Thời Khóa Biểu</title>
+  <meta name="description" content="Thời khóa biểu học tập và sinh hoạt - Giao diện hiện đại, rõ ràng, dễ theo dõi">
   
-  <!-- Font chữ tiếng Việt cực chuẩn, dấu rõ nét, êm mắt cho người lớn tuổi -->
+  <!-- Font chữ hiện đại, sắc nét, chuẩn quốc tế -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS Giao diện ấm cúng, trang nhã, chữ to rõ, hoàn toàn KHÔNG NEON -->
+  <!-- CSS Giao diện hiện đại, sang trọng, tinh tế -->
   <link rel="stylesheet" href="./css/style.css">
   
   <!-- Firebase SDK v8 -->
@@ -21,25 +21,28 @@
 <body>
 
   <div class="page-wrapper">
-    <!-- KHUNG ĐẦU TRANG ẤM CÚNG -->
+    <!-- HEADER HIỆN ĐẠI, SANG TRỌNG -->
     <header class="app-header">
       <div class="header-top">
         <div class="brand-badge">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          Thời Khóa Biểu Của Con
+          Thời Khóa Biểu
         </div>
 
         <div class="header-actions">
-          <!-- NÚT BẬT TẮT CHỮ TO CHO MẸ DỄ ĐỌC -->
-          <button type="button" class="btn-text-size-toggle" id="btn-text-size" onclick="toggleTextSize()" title="Nhấn để phóng to chữ dễ đọc hơn">
-            <span class="text-size-icon">A+</span>
-            <span class="text-size-label" id="text-size-label">Chữ Lớn</span>
+          <!-- TÙY CHỌN CỠ CHỮ DỄ ĐỌC (ACCESSIBILITY) -->
+          <button type="button" class="btn-text-size-toggle" id="btn-text-size" onclick="toggleTextSize()" title="Chuyển đổi cỡ chữ">
+            <span class="text-size-icon">Aa</span>
+            <span class="text-size-label" id="text-size-label">Chữ lớn</span>
           </button>
 
-          <!-- NÚT VÀO QUẢN TRỊ TRANG NHÃ CHO CON -->
-          <a href="./admin.html" class="btn-admin-link" title="Dành cho con quản lý và cập nhật lịch">
+          <!-- NÚT VÀO QUẢN TRỊ TRANG NHÃ -->
+          <a href="./admin.html" class="btn-admin-link" title="Đến trang quản lý">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -49,19 +52,19 @@
         </div>
       </div>
 
-      <h1 class="header-title">Lịch Học & Hoạt Động Của Con</h1>
-      <p class="header-desc">Con gửi mẹ theo dõi mỗi ngày để mẹ yên tâm ❤️</p>
+      <h1 class="header-title">Lịch Học & Sinh Hoạt</h1>
+      <p class="header-desc">Hệ thống theo dõi thời khóa biểu học tập chi tiết</p>
 
-      <!-- ĐỒNG HỒ & NGÀY THÁNG TIẾNG VIỆT TO RÕ, ĐẦY ĐỦ -->
+      <!-- ĐỒNG HỒ & NGÀY THÁNG SẮC NÉT -->
       <div class="live-time-card">
         <div class="live-date-section">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
             <line x1="8" y1="2" x2="8" y2="6"></line>
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          <span id="live-date">Đang tải ngày tháng...</span>
+          <span id="live-date">Đang tải ngày...</span>
         </div>
         <div class="live-clock-badge">
           <span class="live-dot"></span>
@@ -69,37 +72,10 @@
         </div>
       </div>
 
-      <!-- KHUNG TÓM TẮT HÔM NAY DÀNH CHO MẸ (NHÌN LÀ THẤY NGAY) -->
-      <div class="today-focus-banner" id="today-focus-banner">
-        <div class="today-focus-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-        </div>
-        <div class="today-focus-content">
-          <div class="today-focus-title" id="today-focus-title">Đang kiểm tra lịch học hôm nay...</div>
-          <div class="today-focus-desc" id="today-focus-desc">Dữ liệu đang được kết nối trực tiếp...</div>
-        </div>
-      </div>
-
-      <!-- THANH LỌC CHỌN NGÀY SIÊU TO DỄ BẤM -->
+      <!-- THANH LỌC CHỌN NGÀY DẠNG PILL TABS HIỆN ĐẠI -->
       <div class="filter-section">
-        <div class="filter-label">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          <span>Chọn ngày muốn xem:</span>
-        </div>
         <div class="filter-tabs" id="filter-tabs">
-          <!-- Render các nút Hôm nay, Ngày mai, Cả tuần, Thứ 2 - CN -->
+          <!-- Render các nút lọc: Tất cả, Hôm nay, Ngày mai, Thứ 2 - CN -->
         </div>
       </div>
     </header>
@@ -108,22 +84,21 @@
     <main class="schedule-container" id="schedule-container">
       <div class="loading-box">
         <div class="loading-spinner"></div>
-        <p>Đang tải lịch học của con, mẹ chờ xíu nha...</p>
+        <p>Đang đồng bộ dữ liệu thời gian thực...</p>
       </div>
     </main>
 
-    <!-- FOOTER ẤM ÁP -->
+    <!-- FOOTER TINH TẾ -->
     <footer class="app-footer">
       <div class="footer-card">
-        <p class="footer-love">Chúc mẹ luôn mạnh khỏe, bình an và nhiều niềm vui! ❤️</p>
-        <p class="footer-sync-note">Thời khóa biểu đồng bộ tự động theo thời gian thực</p>
+        <p class="footer-sync-note">Dữ liệu được cập nhật tự động theo thời gian thực</p>
         <div class="footer-admin-link-wrap">
           <a href="./admin.html" class="footer-admin-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 20h9"></path>
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
             </svg>
-            Trang chỉnh sửa lịch (Dành cho con)
+            Truy cập trang quản trị
           </a>
         </div>
       </div>

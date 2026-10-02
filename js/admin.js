@@ -165,6 +165,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
   }
 
+  // Haptic feedback nhẹ nhàng khi xoay nấc (rung 8ms)
+  function triggerHaptic() {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try {
+        navigator.vibrate(8);
+      } catch (e) {}
+    }
+  }
+
   // Khởi tạo các cột bánh xe (chỉ tạo 1 lần)
   function initWheels() {
     if (wheelsInitialized) return;
@@ -180,9 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
       el.className = "ios-wheel-item";
       el.textContent = h;
       el.dataset.index = idx;
-      el.addEventListener("click", () => {
-        scrollToIndex(hourCol, idx, "hour");
-      });
       hourCol.appendChild(el);
     });
 
@@ -191,71 +197,79 @@ document.addEventListener("DOMContentLoaded", () => {
       el.className = "ios-wheel-item";
       el.textContent = m;
       el.dataset.index = idx;
-      el.addEventListener("click", () => {
-        scrollToIndex(minCol, idx, "minute");
-      });
       minCol.appendChild(el);
     });
 
-    setupWheelScrollListener(hourCol, "hour");
-    setupWheelScrollListener(minCol, "minute");
-
-    enableDesktopWheelDrag(hourCol, "hour");
-    enableDesktopWheelDrag(minCol, "minute");
+    enableWheelTouchPhysics(hourCol, "hour");
+    enableWheelTouchPhysics(minCol, "minute");
 
     wheelsInitialized = true;
   }
 
+  // Cập nhật class selected thông minh - CHỈ cập nhật khi index thực sự thay đổi!
   function updateSelectedClasses(col, activeIndex) {
-    const items = col.querySelectorAll(".ios-wheel-item");
-    items.forEach((it, i) => {
+    if (col._lastSelectedIdx === activeIndex) return;
+    col._lastSelectedIdx = activeIndex;
+
+    const items = col.children;
+    for (let i = 0; i < items.length; i++) {
       if (i === activeIndex) {
-        it.classList.add("selected");
+        items[i].classList.add("selected");
       } else {
-        it.classList.remove("selected");
+        items[i].classList.remove("selected");
       }
-    });
+    }
   }
 
-  let isProgrammaticScroll = false;
-  let programmaticTimer;
+  // Animation cuộn mượt mà với gia tốc EaseOutCubic chuẩn xác
+  function animateScrollTo(col, targetTop, duration = 200, onComplete) {
+    cancelAnimationFrame(col._raf);
+    const startTop = col.scrollTop;
+    const distance = targetTop - startTop;
 
-  // Lắng nghe scroll mượt mà không xung đột giật cục
-  function setupWheelScrollListener(col, type) {
-    let ticking = false;
+    if (Math.abs(distance) < 0.5) {
+      col.scrollTop = targetTop;
+      if (onComplete) onComplete();
+      return;
+    }
 
-    col.addEventListener("scroll", () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollTop = col.scrollTop;
-          const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
-          const index = Math.max(0, Math.min(itemsCount - 1, Math.round(scrollTop / ITEM_HEIGHT)));
+    const startTime = performance.now();
 
-          updateSelectedClasses(col, index);
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // EaseOutCubic: Hãm phanh êm ái, không giật khựng
+      const ease = 1 - Math.pow(1 - progress, 3);
+      col.scrollTop = startTop + distance * ease;
 
-          if (!isProgrammaticScroll) {
-            const val = (type === "hour") ? HOURS[index] : MINUTES[index];
-            onWheelValueChanged(type, val);
-          }
-          ticking = false;
-        });
-        ticking = true;
+      const itemsCount = (col.id === "wheel-col-hour") ? HOURS.length : MINUTES.length;
+      const curIdx = Math.max(0, Math.min(itemsCount - 1, Math.round(col.scrollTop / ITEM_HEIGHT)));
+      updateSelectedClasses(col, curIdx);
+
+      if (progress < 1) {
+        col._raf = requestAnimationFrame(step);
+      } else {
+        col.scrollTop = targetTop;
+        updateSelectedClasses(col, Math.round(targetTop / ITEM_HEIGHT));
+        if (onComplete) onComplete();
       }
-    }, { passive: true });
+    }
+
+    col._raf = requestAnimationFrame(step);
   }
 
-  function scrollToIndex(col, idx, type) {
-    isProgrammaticScroll = true;
+  function scrollToIndex(col, idx, type, duration = 200) {
+    const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
+    idx = Math.max(0, Math.min(itemsCount - 1, idx));
+    const targetScroll = idx * ITEM_HEIGHT;
+
     updateSelectedClasses(col, idx);
     const val = (type === "hour") ? HOURS[idx] : MINUTES[idx];
     onWheelValueChanged(type, val);
 
-    col.scrollTo({ top: idx * ITEM_HEIGHT, behavior: "smooth" });
-
-    clearTimeout(programmaticTimer);
-    programmaticTimer = setTimeout(() => {
-      isProgrammaticScroll = false;
-    }, 280);
+    animateScrollTo(col, targetScroll, duration, () => {
+      col.style.scrollSnapType = "y mandatory";
+    });
   }
 
   function onWheelValueChanged(type, val) {
@@ -282,42 +296,151 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Kéo chuột mượt mà 1:1 trên máy tính (Desktop drag)
-  function enableDesktopWheelDrag(col, type) {
+  // ==========================================
+  // HỆ THỐNG VẬT LÝ KÉO VUỐT CHO CẢ MOBILE & DESKTOP (SIÊU MƯỢT, KHÔNG BAY BAY, KHÔNG KHỰNG)
+  // ==========================================
+  function enableWheelTouchPhysics(col, type) {
+    const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
     let isDown = false;
     let startY = 0;
     let startScroll = 0;
+    let lastY = 0;
+    let lastTime = 0;
+    let velocity = 0;
     let hasMoved = false;
 
-    col.addEventListener("mousedown", (e) => {
+    function onPointerDown(e) {
+      cancelAnimationFrame(col._raf);
+
       isDown = true;
       hasMoved = false;
-      startY = e.clientY;
+      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      startY = clientY;
+      lastY = clientY;
       startScroll = col.scrollTop;
+      lastTime = performance.now();
+      velocity = 0;
+
       col.style.cursor = "grabbing";
-      col.style.scrollSnapType = "none"; // Tạm ngắt snap để drag trơn tru
-    });
+      col.style.scrollSnapType = "none"; // Tạm ngắt snap để không bị khựng giật
 
-    window.addEventListener("mousemove", (e) => {
+      if (e.pointerId && col.setPointerCapture) {
+        try { col.setPointerCapture(e.pointerId); } catch(err) {}
+      }
+    }
+
+    function onPointerMove(e) {
       if (!isDown) return;
-      const dy = e.clientY - startY;
-      if (Math.abs(dy) > 3) hasMoved = true;
-      col.scrollTop = startScroll - dy;
-    });
+      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      const dy = clientY - startY;
 
-    window.addEventListener("mouseup", () => {
+      if (Math.abs(dy) > 3) {
+        hasMoved = true;
+      }
+
+      const now = performance.now();
+      const dt = now - lastTime;
+      if (dt > 8) {
+        velocity = (lastY - clientY) / dt;
+        lastY = clientY;
+        lastTime = now;
+      }
+
+      let newScroll = startScroll - dy;
+      const maxScroll = (itemsCount - 1) * ITEM_HEIGHT;
+
+      // Cản lực đàn hồi nếu kéo vượt biên
+      if (newScroll < 0) {
+        newScroll = newScroll * 0.35;
+      } else if (newScroll > maxScroll) {
+        newScroll = maxScroll + (newScroll - maxScroll) * 0.35;
+      }
+
+      col.scrollTop = newScroll;
+
+      // Cập nhật vị trí và rung haptic khi trúng nấc
+      const liveIdx = Math.max(0, Math.min(itemsCount - 1, Math.round(newScroll / ITEM_HEIGHT)));
+      if (liveIdx !== col._currentLiveIdx) {
+        col._currentLiveIdx = liveIdx;
+        updateSelectedClasses(col, liveIdx);
+        triggerHaptic();
+        const val = (type === "hour") ? HOURS[liveIdx] : MINUTES[liveIdx];
+        onWheelValueChanged(type, val);
+      }
+    }
+
+    function onPointerUp(e) {
       if (!isDown) return;
       isDown = false;
       col.style.cursor = "grab";
-      col.style.scrollSnapType = "y mandatory"; // Kích hoạt lại snap
 
-      if (hasMoved) {
-        const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
-        const index = Math.max(0, Math.min(itemsCount - 1, Math.round(col.scrollTop / ITEM_HEIGHT)));
-        scrollToIndex(col, index, type);
+      if (e.pointerId && col.releasePointerCapture) {
+        try { col.releasePointerCapture(e.pointerId); } catch(err) {}
       }
-    });
+
+      // 1. Nếu chỉ chạm (tap)
+      if (!hasMoved) {
+        const rect = col.getBoundingClientRect();
+        const clientY = e.clientY !== undefined ? e.clientY : (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : lastY);
+        const tapY = clientY - rect.top;
+        const distFromCenter = tapY - 110; // Kính lúp ở giữa tại 110px
+        const step = Math.round(distFromCenter / ITEM_HEIGHT);
+        const curIdx = Math.max(0, Math.min(itemsCount - 1, Math.round(col.scrollTop / ITEM_HEIGHT)));
+        const targetIdx = Math.max(0, Math.min(itemsCount - 1, curIdx + step));
+        scrollToIndex(col, targetIdx, type);
+        triggerHaptic();
+        return;
+      }
+
+      // 2. Nếu có vuốt: Khống chế quán tính tối đa 4 nấc để không bay mất kiểm soát
+      const maxAdvance = 4;
+      let stepAdvance = Math.round(velocity * 7.5);
+      stepAdvance = Math.max(-maxAdvance, Math.min(maxAdvance, stepAdvance));
+
+      const curIdx = Math.max(0, Math.min(itemsCount - 1, Math.round(col.scrollTop / ITEM_HEIGHT)));
+      const targetIdx = Math.max(0, Math.min(itemsCount - 1, curIdx + stepAdvance));
+
+      scrollToIndex(col, targetIdx, type);
+      triggerHaptic();
+    }
+
+    if (window.PointerEvent) {
+      col.addEventListener("pointerdown", onPointerDown, { passive: true });
+      col.addEventListener("pointermove", onPointerMove, { passive: true });
+      col.addEventListener("pointerup", onPointerUp, { passive: true });
+      col.addEventListener("pointercancel", onPointerUp, { passive: true });
+    } else {
+      col.addEventListener("touchstart", onPointerDown, { passive: true });
+      col.addEventListener("touchmove", onPointerMove, { passive: true });
+      col.addEventListener("touchend", onPointerUp, { passive: true });
+      col.addEventListener("touchcancel", onPointerUp, { passive: true });
+      col.addEventListener("mousedown", onPointerDown);
+      window.addEventListener("mousemove", onPointerMove);
+      window.addEventListener("mouseup", onPointerUp);
+    }
   }
+
+  // Tăng giảm 1 nấc bằng nút bấm (+ / -)
+  window.stepPickerTime = function(type, step) {
+    const col = (type === "hour") ? document.getElementById("wheel-col-hour") : document.getElementById("wheel-col-minute");
+    if (!col) return;
+    const itemsCount = (type === "hour") ? HOURS.length : MINUTES.length;
+    const curIdx = Math.max(0, Math.min(itemsCount - 1, Math.round(col.scrollTop / ITEM_HEIGHT)));
+    const targetIdx = Math.max(0, Math.min(itemsCount - 1, curIdx + step));
+    scrollToIndex(col, targetIdx, type);
+    triggerHaptic();
+  };
+
+  // Chọn nhanh giờ
+  window.setQuickHour = function(hourStr) {
+    initWheels();
+    const hourCol = document.getElementById("wheel-col-hour");
+    const idx = HOURS.indexOf(hourStr);
+    if (idx !== -1 && hourCol) {
+      scrollToIndex(hourCol, idx, "hour");
+      triggerHaptic();
+    }
+  };
 
   // Đặt vị trí 2 bánh xe theo giờ & phút
   function setWheelsToTime(timeStr, smooth = false) {
@@ -337,22 +460,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const hourCol = document.getElementById("wheel-col-hour");
     const minCol = document.getElementById("wheel-col-minute");
 
-    isProgrammaticScroll = true;
-    clearTimeout(programmaticTimer);
-
-    requestAnimationFrame(() => {
-      if (hourCol) {
-        hourCol.scrollTo({ top: hourIndex * ITEM_HEIGHT, behavior: smooth ? "smooth" : "auto" });
-        updateSelectedClasses(hourCol, hourIndex);
-      }
-      if (minCol) {
-        minCol.scrollTo({ top: minIndex * ITEM_HEIGHT, behavior: smooth ? "smooth" : "auto" });
-        updateSelectedClasses(minCol, minIndex);
-      }
-      programmaticTimer = setTimeout(() => {
-        isProgrammaticScroll = false;
-      }, smooth ? 300 : 80);
-    });
+    if (hourCol) {
+      scrollToIndex(hourCol, hourIndex, "hour", smooth ? 250 : 0);
+    }
+    if (minCol) {
+      scrollToIndex(minCol, minIndex, "minute", smooth ? 250 : 0);
+    }
   }
 
   // Mở modal xoay chọn thời gian
@@ -406,7 +519,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const minCol = document.getElementById("wheel-col-minute");
     const idx = MINUTES.indexOf(minStr);
     if (idx !== -1 && minCol) {
-      scrollToIndex(minCol, idx, "minute");
+      scrollToIndex(minCol, idx, "minute", 250);
+      triggerHaptic();
     }
   };
 
