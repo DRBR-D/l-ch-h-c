@@ -19,8 +19,13 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// Tham chiếu đến bảng 'schedule' trong Realtime Database
+// Tham chiếu đến các nhánh trong Realtime Database:
+// 1. 'schedule': Lịch học tuần này (đang áp dụng hiển thị ngoài trang chủ)
+// 2. 'schedule_next': Lịch học tuần sau (nhập trước, tự động chuyển vào thứ 2)
+// 3. 'schedule_meta': Metadata theo dõi trạng thái chuyển giao tuần
 const db = firebase.database().ref("schedule");
+const dbNext = firebase.database().ref("schedule_next");
+const dbMeta = firebase.database().ref("schedule_meta");
 
 // Danh sách các ngày trong tuần
 const DAYS_OF_WEEK = [

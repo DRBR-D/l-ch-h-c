@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản Lý Lịch Học</title>
   
-  <!-- CSS Giao diện Quản trị -->
+  <!-- Font chữ hiện đại, sắc nét -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS Giao diện Quản trị Hiện Đại & Tinh Tế -->
   <link rel="stylesheet" href="./css/admin.css">
 
-  <!-- Firebase SDK v8 (Cố định & Ổn định) -->
+  <!-- Firebase SDK v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -17,7 +22,7 @@
   <div class="admin-wrapper">
 
     <!-- =========================================
-         1. KHUNG NHẬP MÃ PIN XÁC THỰC (BẢO MẬT)
+         1. KHUNG NHẬP MÃ PIN XÁC THỰC
          ========================================= -->
     <div class="admin-card" id="auth-box">
       <div class="auth-icon-wrap">
@@ -64,315 +69,431 @@
     </div>
 
     <!-- =========================================
-         2. BẢNG ĐIỀU KHIỂN QUẢN LÝ (Sau khi mở khóa)
+         2. BẢNG ĐIỀU KHIỂN QUẢN LÝ (SẮP XẾP GỌN GÀNG, SANG TRỌNG)
          ========================================= -->
     <div id="admin-panel">
       <!-- THANH ĐIỀU HƯỚNG TRÊN -->
       <nav class="admin-navbar">
-        <a href="./index.html" class="nav-back-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-          Trang Xem Lịch
-        </a>
+        <div class="navbar-left">
+          <div class="nav-brand-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Hệ Thống Quản Lý Lịch</span>
+          </div>
+        </div>
 
-        <button type="button" class="btn-logout" onclick="logout()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          Đăng Xuất
-        </button>
+        <div class="navbar-right">
+          <a href="./index.html" class="nav-btn-link" title="Mở trang xem thời khóa biểu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span>Xem Lịch</span>
+          </a>
+
+          <button type="button" class="btn-logout" onclick="logout()" title="Đăng xuất">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Đăng Xuất</span>
+          </button>
+        </div>
       </nav>
 
-      <!-- FORM THÊM / SỬA MÔN HỌC -->
-      <section class="admin-card">
+      <!-- CHUYỂN ĐỔI CHẾ ĐỘ: LỊCH TUẦN NÀY vs LỊCH TUẦN SAU (NHẬP TRƯỚC) -->
+      <div class="schedule-mode-switcher">
+        <button type="button" class="mode-tab-btn active" id="tab-mode-current" onclick="switchScheduleMode('current')">
+          <div class="mode-tab-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="mode-tab-info">
+            <span class="mode-tab-title">Lịch Tuần Này</span>
+            <span class="mode-tab-desc">Đang hiển thị ngoài trang chủ</span>
+          </div>
+          <span class="mode-badge live">ĐANG DÙNG</span>
+        </button>
+
+        <button type="button" class="mode-tab-btn" id="tab-mode-next" onclick="switchScheduleMode('next')">
+          <div class="mode-tab-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="mode-tab-info">
+            <span class="mode-tab-title">Lịch Tuần Sau (Nhập Trước)</span>
+            <span class="mode-tab-desc">Tự kích hoạt 00:00 Thứ Hai tới</span>
+          </div>
+          <span class="mode-badge draft" id="next-count-badge">0 môn</span>
+        </button>
+      </div>
+
+      <!-- BANNER TRẠNG THÁI NGỮ CẢNH -->
+      <div class="mode-context-banner" id="mode-context-banner">
+        <div class="context-banner-icon" id="context-banner-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 14 14"></polyline>
+          </svg>
+        </div>
+        <div class="context-banner-text" id="context-banner-text">
+          Bạn đang xem và chỉnh sửa <strong>Lịch Học Tuần Này</strong> (Đang áp dụng trực tiếp).
+        </div>
+      </div>
+
+      <!-- THANH CÔNG CỤ TÁC VỤ NHANH (TIỆN LỢI, GỌN GÀNG) -->
+      <div class="admin-quick-toolbar">
+        <div class="toolbar-group-left">
+          <!-- Nút bật / tắt form thêm tiết học -->
+          <button type="button" class="btn-tool primary" id="btn-toggle-form" onclick="toggleFormCard()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span id="btn-toggle-form-text">Thêm Tiết Học Mới</span>
+          </button>
+
+          <!-- Nút kích hoạt ngay tuần sau thành tuần này -->
+          <button type="button" class="btn-tool success" id="btn-apply-next-now" onclick="applyNextWeekNow()" style="display: none;" title="Kích hoạt lịch tuần sau thành tuần này ngay lập tức">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Áp Dụng Cho Tuần Này Ngay</span>
+          </button>
+
+          <!-- Nút sao chép tuần này sang tuần sau -->
+          <button type="button" class="btn-tool outline" id="btn-copy-to-next" onclick="copyCurrentToNextWeek()" title="Sao chép toàn bộ lịch tuần này sang tuần sau để chỉnh sửa nhanh">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Sao chép ➔ Tuần Sau</span>
+          </button>
+        </div>
+
+        <div class="toolbar-group-right">
+          <!-- Sao chép toàn bộ TKB -->
+          <button type="button" class="btn-tool icon-btn" onclick="copyScheduleText()" title="Sao chép toàn bộ thời khóa biểu vào bộ nhớ tạm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Sao chép TKB</span>
+          </button>
+
+          <!-- Dán TKB từ clipboard / text -->
+          <button type="button" class="btn-tool icon-btn" onclick="openPasteModal()" title="Dán lịch học từ clipboard hoặc văn bản">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            </svg>
+            <span>Dán TKB</span>
+          </button>
+
+          <!-- Xóa toàn bộ lịch tuần này -->
+          <button type="button" class="btn-tool icon-btn danger" onclick="clearCurrentScheduleData()" title="Xóa toàn bộ môn của tuần đang chọn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Xóa tuần</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- =========================================
+           FORM THÊM / SỬA MÔN HỌC (THIẾT KẾ CARD GỌN GÀNG, CÓ THỂ THU GỌN)
+           ========================================= -->
+      <section class="admin-card form-drawer-card" id="form-card" style="display: none;">
         <div class="card-header-bar">
           <h2 class="card-title" id="form-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="16"/>
               <line x1="8" y1="12" x2="16" y2="12"/>
             </svg>
-            Thêm Môn / Hoạt Động Mới
+            <span>Thêm Tiết Học Mới</span>
           </h2>
+          <button type="button" class="btn-close-form" onclick="toggleFormCard(false)" title="Đóng bảng nhập">✕</button>
         </div>
 
         <form id="schedule-form">
-          <div class="form-group">
-            <label for="day-val">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              Chọn Thứ Trong Tuần:
-            </label>
-            <select id="day-val" required>
-              <option value="Thứ Hai">Thứ Hai</option>
-              <option value="Thứ Ba">Thứ Ba</option>
-              <option value="Thứ Tư">Thứ Tư</option>
-              <option value="Thứ Năm">Thứ Năm</option>
-              <option value="Thứ Sáu">Thứ Sáu</option>
-              <option value="Thứ Bảy">Thứ Bảy</option>
-              <option value="Chủ Nhật">Chủ Nhật</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              Thời Gian Học:
-            </label>
-
-            <!-- 2 KHUNG THỜI GIAN: TỪ - ĐẾN -->
-            <div class="time-picker-dual-card">
-              <!-- KHUNG TỪ -->
-              <div class="time-box-item" id="time-box-start" onclick="openTimePickerModal('start')" title="Nhấn để chỉnh giờ bắt đầu (Từ)">
-                <div class="time-box-header">
-                  <span class="time-box-badge start-badge">TỪ</span>
-                  <span class="time-box-subtext">Giờ bắt đầu</span>
-                </div>
-                <div class="time-box-display">
-                  <span class="time-digits" id="display-time-start">06:30</span>
-                  <span class="time-box-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                  </span>
-                </div>
+          <!-- PHẦN 1: THỨ & THỜI GIAN -->
+          <div class="form-section-box">
+            <div class="form-section-label">1. Ngày & Thời Gian Học</div>
+            
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="day-val">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  Thứ Trong Tuần:
+                </label>
+                <select id="day-val" required>
+                  <option value="Thứ Hai">Thứ Hai</option>
+                  <option value="Thứ Ba">Thứ Ba</option>
+                  <option value="Thứ Tư">Thứ Tư</option>
+                  <option value="Thứ Năm">Thứ Năm</option>
+                  <option value="Thứ Sáu">Thứ Sáu</option>
+                  <option value="Thứ Bảy">Thứ Bảy</option>
+                  <option value="Chủ Nhật">Chủ Nhật</option>
+                </select>
               </div>
 
-              <!-- MŨI TÊN NGĂN CÁCH -->
-              <div class="time-box-arrow">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </div>
+              <div class="form-group">
+                <label>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Khung Giờ Học (Chạm để chỉnh):
+                </label>
+                
+                <div class="time-picker-dual-card">
+                  <!-- KHUNG TỪ -->
+                  <div class="time-box-item" id="time-box-start" onclick="openTimePickerModal('start')" title="Nhấn để chỉnh giờ bắt đầu (Từ)">
+                    <div class="time-box-header">
+                      <span class="time-box-badge start-badge">TỪ</span>
+                      <span class="time-box-subtext">Bắt đầu</span>
+                    </div>
+                    <div class="time-box-display">
+                      <span class="time-digits" id="display-time-start">06:30</span>
+                      <span class="time-box-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
 
-              <!-- KHUNG ĐẾN -->
-              <div class="time-box-item" id="time-box-end" onclick="openTimePickerModal('end')" title="Nhấn để chỉnh giờ kết thúc (Đến)">
-                <div class="time-box-header">
-                  <span class="time-box-badge end-badge">ĐẾN</span>
-                  <span class="time-box-subtext">Giờ kết thúc</span>
-                </div>
-                <div class="time-box-display">
-                  <span class="time-digits" id="display-time-end">11:00</span>
-                  <span class="time-box-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
+                  <!-- MŨI TÊN -->
+                  <div class="time-box-arrow">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
-                  </span>
+                  </div>
+
+                  <!-- KHUNG ĐẾN -->
+                  <div class="time-box-item" id="time-box-end" onclick="openTimePickerModal('end')" title="Nhấn để chỉnh giờ kết thúc (Đến)">
+                    <div class="time-box-header">
+                      <span class="time-box-badge end-badge">ĐẾN</span>
+                      <span class="time-box-subtext">Kết thúc</span>
+                    </div>
+                    <div class="time-box-display">
+                      <span class="time-digits" id="display-time-end">11:00</span>
+                      <span class="time-box-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
                 </div>
+
+                <!-- Input ẩn đồng bộ giá trị -->
+                <input type="hidden" id="time-val" value="06:30 - 11:00" required>
               </div>
             </div>
 
-            <!-- Input ẩn đồng bộ giá trị với Firebase và Form -->
-            <input type="hidden" id="time-val" value="06:30 - 11:00" required>
-
-            <!-- Gợi ý chọn nhanh các ca học -->
+            <!-- Gợi ý ca học nhanh -->
             <div class="time-presets" id="time-presets-bar">
               <button type="button" class="preset-chip active" data-time="06:30 - 11:00" onclick="setQuickTime('06:30 - 11:00')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="5"></circle>
-                  <line x1="12" y1="1" x2="12" y2="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="23"></line>
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                  <line x1="1" y1="12" x2="3" y2="12"></line>
-                  <line x1="21" y1="12" x2="23" y2="12"></line>
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <span>Ca Sáng (06:30 - 11:00)</span>
+                ☀️ Ca Sáng (06:30 - 11:00)
               </button>
-              <button type="button" class="preset-chip" data-time="12:30 - 14:30" onclick="setQuickTime('12:30 - 14:30')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>Ca Chiều (12:30 - 14:30)</span>
+              <button type="button" class="preset-chip" data-time="12:30 - 16:30" onclick="setQuickTime('12:30 - 16:30')">
+                🌤️ Ca Chiều (12:30 - 16:30)
               </button>
               <button type="button" class="preset-chip" data-time="18:00 - 20:00" onclick="setQuickTime('18:00 - 20:00')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                <span>Ca Tối (18:00 - 20:00)</span>
+                🌙 Ca Tối (18:00 - 20:00)
               </button>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="subject-val">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-              </svg>
-              Tên Môn Học / Hoạt Động:
-            </label>
-            <input 
-              type="text" 
-              id="subject-val" 
-              placeholder="Tên môn học / hoạt động..." 
-              required
-            >
+          <!-- PHẦN 2: MÔN HỌC -->
+          <div class="form-section-box">
+            <div class="form-section-label">2. Tên Môn Học / Hoạt Động</div>
+            
+            <div class="form-group">
+              <input 
+                type="text" 
+                id="subject-val" 
+                placeholder="Nhập tên môn học hoặc chọn nhanh bên dưới..." 
+                required
+              >
 
-            <!-- GỢI Ý CHỌN NHANH MÔN HỌC (HIỆU ỨNG ĐẸP) -->
-            <div class="quick-subject-container">
-              <div class="quick-subject-header">
-                <div class="quick-subject-title">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                  <span>Gợi ý chọn nhanh môn học</span>
-                  <span class="quick-subject-badge">10 môn</span>
-                </div>
-                <div class="subject-format-toggle" title="Chọn kiểu định dạng tên môn khi bấm">
-                  <span class="format-toggle-label">Kiểu điền:</span>
-                  <button type="button" class="format-btn active" id="fmt-code-name" data-format="code_name" onclick="setSubjectFormat('code_name')">Mã : Tên</button>
-                  <button type="button" class="format-btn" id="fmt-name-only" data-format="name_only" onclick="setSubjectFormat('name_only')">Chỉ Tên</button>
-                  <button type="button" class="format-btn" id="fmt-code-only" data-format="code_only" onclick="setSubjectFormat('code_only')">Chỉ Mã</button>
-                </div>
-              </div>
-
-              <!-- Lưới các thẻ môn học hiệu ứng -->
-              <div class="subject-chips-grid" id="subject-chips-grid">
-                <!-- Được render động từ JavaScript -->
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="room-val">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              Phòng Học / Địa Điểm (Không bắt buộc):
-            </label>
-            <input 
-              type="text" 
-              id="room-val" 
-              placeholder="Phòng học (chọn bên dưới hoặc nhập tay)..."
-            >
-
-            <!-- BỘ CHỌN PHÒNG HỌC (TÒA A B C E F • SỐ 0-10 • SỐ 0-20) -->
-            <div class="quick-room-container">
-              <div class="quick-room-header">
-                <div class="quick-room-title">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                  </svg>
-                  <span>Chọn phòng học</span>
-                </div>
-                <div class="quick-room-actions">
-                  <button type="button" class="btn-clear-room" onclick="clearRoomValue()" title="Xóa phòng học">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
+              <!-- BẢNG CHỌN NHANH 10 MÔN HỌC -->
+              <div class="quick-subject-container">
+                <div class="quick-subject-header">
+                  <div class="quick-subject-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
-                    Xóa
-                  </button>
-                </div>
-              </div>
+                    <span>Chọn môn học:</span>
+                  </div>
 
-              <!-- Hàng chọn Tòa: A, B, C, E, F -->
-              <div class="room-builder-section">
-                <div class="builder-row">
-                  <span class="builder-label">Tòa:</span>
-                  <div class="building-button-group">
-                    <button type="button" class="bld-btn" data-bld="A" onclick="setRoomBuilding('A')">Tòa A</button>
-                    <button type="button" class="bld-btn" data-bld="B" onclick="setRoomBuilding('B')">Tòa B</button>
-                    <button type="button" class="bld-btn" data-bld="C" onclick="setRoomBuilding('C')">Tòa C</button>
-                    <button type="button" class="bld-btn" data-bld="E" onclick="setRoomBuilding('E')">Tòa E</button>
-                    <button type="button" class="bld-btn" data-bld="F" onclick="setRoomBuilding('F')">Tòa F</button>
+                  <!-- CHỌN 1 MÔN HOẶC NHIỀU MÔN TRONG 1 NGÀY -->
+                  <div class="subject-mode-toggle" title="Chọn 1 môn hoặc chọn nhiều môn trong ngày (Ca Sáng + Ca Chiều)">
+                    <button type="button" class="mode-select-btn active" id="btn-mode-single" onclick="setSubjectSelectMode('single')">1 Môn</button>
+                    <button type="button" class="mode-select-btn" id="btn-mode-multi" onclick="setSubjectSelectMode('multi')">Nhiều Môn (+)</button>
+                  </div>
+
+                  <div class="subject-format-toggle" title="Kiểu định dạng khi điền vào ô">
+                    <button type="button" class="format-btn active" id="fmt-code-name" data-format="code_name" onclick="setSubjectFormat('code_name')">Mã : Tên</button>
+                    <button type="button" class="format-btn" id="fmt-name-only" data-format="name_only" onclick="setSubjectFormat('name_only')">Tên</button>
+                    <button type="button" class="format-btn" id="fmt-code-only" data-format="code_only" onclick="setSubjectFormat('code_only')">Mã</button>
                   </div>
                 </div>
 
-                <!-- Hàng chọn 2 số: Số 1 (0-10) và Số 2 (0-20) -->
-                <div class="builder-numbers-row">
-                  <div class="num-picker-col">
-                    <span class="num-picker-label">Số 1 (0 - 10)</span>
-                    <div class="stepper-wrap">
-                      <button type="button" class="step-btn" onclick="stepRoomNumber(1, -1)">−</button>
-                      <select id="room-num1-select" class="num-select" onchange="onRoomNumberChange()">
-                        <!-- Render qua JS 0..10 -->
-                      </select>
-                      <button type="button" class="step-btn" onclick="stepRoomNumber(1, 1)">+</button>
-                    </div>
-                  </div>
-
-                  <div class="num-dot-separator">.</div>
-
-                  <div class="num-picker-col">
-                    <span class="num-picker-label">Số 2 (0 - 20)</span>
-                    <div class="stepper-wrap">
-                      <button type="button" class="step-btn" onclick="stepRoomNumber(2, -1)">−</button>
-                      <select id="room-num2-select" class="num-select" onchange="onRoomNumberChange()">
-                        <!-- Render qua JS 0..20 -->
-                      </select>
-                      <button type="button" class="step-btn" onclick="stepRoomNumber(2, 1)">+</button>
-                    </div>
-                  </div>
+                <div class="subject-chips-grid" id="subject-chips-grid">
+                  <!-- Render động từ JS -->
                 </div>
+
+                <!-- BẢNG PHÂN BỔ NHIỀU CA KHI CHỌN NHIỀU MÔN TRONG 1 NGÀY -->
+                <div id="multi-subject-panel" class="multi-subject-panel" style="display: none;"></div>
               </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="note-val">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-              </svg>
-              Ghi Chú Thêm (Không bắt buộc):
-            </label>
-            <input 
-              type="text" 
-              id="note-val" 
-              placeholder="Ghi chú thêm nếu có..."
-            >
+          <!-- PHẦN 3: PHÒNG HỌC & GHI CHÚ -->
+          <div class="form-section-box">
+            <div class="form-section-label">3. Phòng Học & Ghi Chú</div>
+            
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="room-val">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  Phòng Học:
+                </label>
+                <input 
+                  type="text" 
+                  id="room-val" 
+                  placeholder="Ví dụ: F4.5 (chọn bên dưới hoặc nhập tay)"
+                >
+
+                <!-- BỘ CHỌN PHÒNG HỌC TỐI GIẢN -->
+                <div class="quick-room-container">
+                  <div class="quick-room-header">
+                    <span class="quick-room-title">Chọn tòa & số phòng:</span>
+                    <button type="button" class="btn-clear-room" onclick="clearRoomValue()" title="Xóa phòng">Xóa</button>
+                  </div>
+
+                  <div class="room-builder-section">
+                    <div class="builder-row">
+                      <span class="builder-label">Tòa:</span>
+                      <div class="building-button-group">
+                        <button type="button" class="bld-btn" data-bld="A" onclick="setRoomBuilding('A')">Tòa A</button>
+                        <button type="button" class="bld-btn" data-bld="B" onclick="setRoomBuilding('B')">Tòa B</button>
+                        <button type="button" class="bld-btn" data-bld="C" onclick="setRoomBuilding('C')">Tòa C</button>
+                        <button type="button" class="bld-btn" data-bld="E" onclick="setRoomBuilding('E')">Tòa E</button>
+                        <button type="button" class="bld-btn" data-bld="F" onclick="setRoomBuilding('F')">Tòa F</button>
+                      </div>
+                    </div>
+
+                    <div class="builder-numbers-row">
+                      <div class="num-picker-col">
+                        <span class="num-picker-label">Số 1 (0-10)</span>
+                        <div class="stepper-wrap">
+                          <button type="button" class="step-btn" onclick="stepRoomNumber(1, -1)">−</button>
+                          <select id="room-num1-select" class="num-select" onchange="onRoomNumberChange()"></select>
+                          <button type="button" class="step-btn" onclick="stepRoomNumber(1, 1)">+</button>
+                        </div>
+                      </div>
+
+                      <div class="num-dot-separator">.</div>
+
+                      <div class="num-picker-col">
+                        <span class="num-picker-label">Số 2 (0-20)</span>
+                        <div class="stepper-wrap">
+                          <button type="button" class="step-btn" onclick="stepRoomNumber(2, -1)">−</button>
+                          <select id="room-num2-select" class="num-select" onchange="onRoomNumberChange()"></select>
+                          <button type="button" class="step-btn" onclick="stepRoomNumber(2, 1)">+</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="note-val">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                  Ghi Chú Thêm (Nếu có):
+                </label>
+                <textarea 
+                  id="note-val" 
+                  rows="4" 
+                  placeholder="Ghi chú bài tập, tài liệu mang theo, dặn dò..."
+                  style="width: 100%; border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 10px; font-family: inherit; font-size: 0.95rem; resize: vertical;"
+                ></textarea>
+              </div>
+            </div>
           </div>
 
-          <button type="submit" class="btn-primary" id="btn-submit-form">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-              <polyline points="17 21 17 13 7 13 7 21"/>
-              <polyline points="7 3 7 8 15 8"/>
-            </svg>
-            Lưu Lên Hệ Thống
-          </button>
+          <!-- NÚT LƯU & HỦY -->
+          <div class="form-submit-row">
+            <button type="submit" class="btn-primary" id="btn-submit-form">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              <span>Lưu Lên Hệ Thống</span>
+            </button>
 
-          <!-- Nút hủy khi đang chỉnh sửa -->
-          <div class="edit-actions-row" id="edit-cancel-wrap" style="display: none;">
+            <!-- Nút Lưu & Thêm tiếp ca sau cho cùng ngày -->
+            <button type="button" class="btn-save-next-shift" id="btn-save-next-shift" onclick="saveAndNextShift()" title="Lưu môn này và chuyển nhanh sang ca tiếp theo của cùng ngày">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span id="btn-save-next-text">+ Lưu & Thêm Tiếp Ca Chiều</span>
+            </button>
+
             <button type="button" class="btn-cancel" onclick="resetForm()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              Hủy Chỉnh Sửa
+              <span>Hủy / Đóng</span>
             </button>
           </div>
         </form>
       </section>
 
-      <!-- DANH SÁCH LỊCH HIỆN CÓ -->
+      <!-- =========================================
+           DANH SÁCH LỊCH HIỆN CÓ
+           ========================================= -->
       <section class="admin-card">
         <div class="card-header-bar">
           <h2 class="card-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="8" y1="6" x2="21" y2="6"/>
               <line x1="8" y1="12" x2="21" y2="12"/>
               <line x1="8" y1="18" x2="21" y2="18"/>
@@ -380,16 +501,17 @@
               <line x1="3" y1="12" x2="3.01" y2="12"/>
               <line x1="3" y1="18" x2="3.01" y2="18"/>
             </svg>
-            Danh Sách Môn Đã Lưu
+            <span id="list-card-title">Danh Sách Môn Học (Tuần Này)</span>
           </h2>
+          <span class="total-count-pill" id="total-count-pill">0 tiết học</span>
         </div>
 
         <!-- Thanh lọc theo thứ -->
         <div class="admin-filter-bar" id="admin-filter-bar"></div>
 
-        <!-- Vùng chứa các mục -->
+        <!-- Vùng chứa các mục tiết học -->
         <div class="item-list-wrap" id="items-list">
-          <div style="text-align: center; color: var(--text-muted); padding: 20px;">
+          <div style="text-align: center; color: var(--text-muted); padding: 30px;">
             Đang tải dữ liệu từ máy chủ...
           </div>
         </div>
@@ -399,18 +521,16 @@
   </div>
 
   <!-- =========================================
-       MODAL XOAY CHỌN THỜI GIAN KIỂU IPHONE
+       MODAL 1: XOAY CHỌN THỜI GIAN KIỂU IPHONE (SIÊU MƯỢT)
        ========================================= -->
   <div id="ios-time-modal-backdrop" class="ios-time-backdrop" onclick="handleBackdropClick(event)">
     <div class="ios-time-sheet" id="ios-time-sheet" onclick="event.stopPropagation()">
-      <!-- Thanh điều hướng modal chuẩn iOS -->
       <div class="ios-time-sheet-header">
         <button type="button" class="ios-btn-text ios-btn-cancel" onclick="closeTimePickerModal(false)">Hủy</button>
         <div class="ios-sheet-title" id="ios-picker-title">Chỉnh Giờ Học</div>
         <button type="button" class="ios-btn-text ios-btn-done" onclick="closeTimePickerModal(true)">Xong</button>
       </div>
 
-      <!-- Segmented Control chuyển đổi TỪ / ĐẾN ngay trong modal -->
       <div class="ios-segmented-control">
         <button type="button" id="tab-start" class="ios-segment-tab active" onclick="switchPickerTarget('start')">
           <span class="segment-label">Từ</span>
@@ -422,7 +542,7 @@
         </button>
       </div>
 
-      <!-- Phím chọn nhanh giờ & phút tiện lợi -->
+      <!-- Phím chọn nhanh giờ & phút -->
       <div class="ios-quick-shortcuts">
         <div class="quick-row">
           <span class="quick-min-label">Giờ:</span>
@@ -431,6 +551,7 @@
           <button type="button" class="quick-min-btn" onclick="setQuickHour('11')">11h</button>
           <button type="button" class="quick-min-btn" onclick="setQuickHour('12')">12h</button>
           <button type="button" class="quick-min-btn" onclick="setQuickHour('13')">13h</button>
+          <button type="button" class="quick-min-btn" onclick="setQuickHour('16')">16h</button>
           <button type="button" class="quick-min-btn" onclick="setQuickHour('17')">17h</button>
           <button type="button" class="quick-min-btn" onclick="setQuickHour('18')">18h</button>
         </div>
@@ -443,63 +564,139 @@
         </div>
       </div>
 
-      <!-- Bánh xe xoay thời gian iOS (Giờ | Phút) -->
+      <!-- Bánh xe xoay thời gian iOS -->
       <div class="ios-wheel-container">
-        <!-- Vạch kính lúp highlight ở giữa -->
         <div class="ios-wheel-lens"></div>
         <div class="ios-wheel-gradient-top"></div>
         <div class="ios-wheel-gradient-bottom"></div>
 
-        <!-- Cột Giờ -->
         <div class="ios-wheel-col-wrapper">
           <div class="ios-col-stepper-header">
             <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('hour', -1)" title="Lùi 1 giờ">−</button>
             <span class="ios-col-label">GIỜ</span>
             <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('hour', 1)" title="Tăng 1 giờ">+</button>
           </div>
-          <div class="ios-wheel-col" id="wheel-col-hour">
-            <!-- 00 .. 23 -->
-          </div>
+          <div class="ios-wheel-col" id="wheel-col-hour"></div>
         </div>
 
-        <!-- Dấu hai chấm phân cách -->
         <div class="ios-wheel-divider">:</div>
 
-        <!-- Cột Phút: bước nhảy 5 phút (00, 05, 10, 15, ... 55 ko số lẻ) -->
         <div class="ios-wheel-col-wrapper">
           <div class="ios-col-stepper-header">
             <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('minute', -1)" title="Lùi 5 phút">−</button>
             <span class="ios-col-label">PHÚT</span>
             <button type="button" class="wheel-stepper-btn" onclick="stepPickerTime('minute', 1)" title="Tăng 5 phút">+</button>
           </div>
-          <div class="ios-wheel-col" id="wheel-col-minute">
-            <!-- 00, 05, 10, ... 55 -->
-          </div>
+          <div class="ios-wheel-col" id="wheel-col-minute"></div>
         </div>
       </div>
 
-      <!-- Chọn nhanh cả ca học ngay trong Modal -->
+      <!-- Ca học chọn nhanh trong modal -->
       <div class="ios-modal-presets">
         <span class="modal-presets-title">Hoặc chọn nhanh theo ca:</span>
         <div class="modal-presets-chips">
           <button type="button" class="modal-preset-chip" onclick="applyModalPreset('06:30', '11:00')">Ca Sáng (06:30 - 11:00)</button>
-          <button type="button" class="modal-preset-chip" onclick="applyModalPreset('12:30', '14:30')">Ca Chiều (12:30 - 14:30)</button>
+          <button type="button" class="modal-preset-chip" onclick="applyModalPreset('12:30', '16:30')">Ca Chiều (12:30 - 16:30)</button>
           <button type="button" class="modal-preset-chip" onclick="applyModalPreset('18:00', '20:00')">Ca Tối (18:00 - 20:00)</button>
         </div>
-      </div>
-
-      <!-- Gợi ý thao tác thân thiện -->
-      <div class="ios-wheel-footer-hint">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        Cuộn bánh xe, kéo thả chuột hoặc chạm trực tiếp vào số
       </div>
     </div>
   </div>
 
-  <!-- CẤU HÌNH & CODE JS -->
+  <!-- =========================================
+       MODAL 2: DÁN & NHẬP THỜI KHÓA BIỂU
+       ========================================= -->
+  <div id="paste-modal-backdrop" class="admin-modal-backdrop" onclick="closePasteModal()">
+    <div class="admin-modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg>
+          Dán & Nhập Thời Khóa Biểu
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closePasteModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc">
+          Dán văn bản lịch học hoặc mã JSON vào khung dưới. Hệ thống sẽ tự động bóc tách ngày, giờ, tên môn, phòng và ghi chú:
+        </p>
+
+        <textarea 
+          id="paste-textarea" 
+          class="paste-textarea" 
+          placeholder="Ví dụ dán:&#10;Thứ Hai:&#10;• 06:30 - 11:00 | ATĐ: An toàn điện | Phòng: F4.5&#10;• 12:30 - 16:30 | ĐTCB: Điện tử cơ bản | Phòng: F6.4&#10;&#10;Thứ Ba:&#10;• 06:30 - 11:00 | ĐLĐ: Đo lường điện | Phòng: F4.5"
+        ></textarea>
+
+        <div class="paste-target-select">
+          <label for="paste-target-week"><strong>Nạp vào mục:</strong></label>
+          <select id="paste-target-week" class="num-select" style="padding: 6px 12px; font-weight: 700;">
+            <option value="current">Tuần Này (Đang Dùng)</option>
+            <option value="next">Tuần Sau (Nhập Trước)</option>
+          </select>
+        </div>
+
+        <div id="paste-preview-msg" class="paste-preview-msg"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closePasteModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="executePasteSchedule()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Xác Nhận Nhập Lịch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODAL 3: SAO CHÉP TỪ THỨ NÀY SANG THỨ KHÁC
+       ========================================= -->
+  <div id="copy-day-modal-backdrop" class="admin-modal-backdrop" onclick="closeCopyDayModal()">
+    <div class="admin-modal-box copy-day-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Sao Chép Lịch Sang Thứ Khác
+        </h3>
+        <button type="button" class="modal-close-btn" onclick="closeCopyDayModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc" id="copy-day-desc">
+          Sao chép toàn bộ các tiết học từ <strong id="copy-from-day-text">Thứ Hai</strong> sang thứ:
+        </p>
+
+        <input type="hidden" id="copy-from-day-val">
+
+        <div class="form-group" style="margin-top: 12px;">
+          <label for="copy-to-day-select"><strong>Chọn thứ đích muốn sao chép đến:</strong></label>
+          <select id="copy-to-day-select" class="num-select" style="width: 100%; padding: 10px; font-weight: 700;">
+            <!-- JS render các thứ còn lại -->
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeCopyDayModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="executeCopyDay()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Thực Hiện Sao Chép
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CẤU HÌNH & JS -->
   <script src="./js/firebase-config.js"></script>
   <script src="./js/admin.js"></script>
 </body>

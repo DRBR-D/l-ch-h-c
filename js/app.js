@@ -336,7 +336,50 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // 6. LẮNG NGHE DỮ LIỆU TỪ FIREBASE REALTIME
+  // 6. KIỂM TRA TỰ ĐỘNG CHUYỂN GIAO THỜI KHÓA BIỂU ĐẦU TUẦN THỨ HAI
+  // ==========================================
+  function getISOWeekKey(d = new Date()) {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
+  }
+
+  function checkViewerAutoPromote() {
+    const currentWeekKey = getISOWeekKey();
+    if (typeof dbMeta === "undefined" || typeof dbNext === "undefined") return;
+
+    dbMeta.once("value").then(metaSnap => {
+      const meta = metaSnap.val() || {};
+      if (!meta.lastPromotedWeek) {
+        dbMeta.update({ lastPromotedWeek: currentWeekKey, initializedAt: new Date().toISOString() });
+        return;
+      }
+      if (meta.lastPromotedWeek !== currentWeekKey) {
+        dbNext.once("value").then(nextSnap => {
+          const nextData = nextSnap.val();
+          if (nextData && typeof nextData === "object" && Object.keys(nextData).length > 0) {
+            const updates = {};
+            updates["schedule"] = nextData;
+            updates["schedule_next"] = null;
+            updates["schedule_meta/lastPromotedWeek"] = currentWeekKey;
+            updates["schedule_meta/lastPromotedAt"] = new Date().toISOString();
+            firebase.database().ref().update(updates);
+          } else {
+            dbMeta.update({ lastPromotedWeek: currentWeekKey });
+          }
+        });
+      }
+    }).catch(err => {
+      console.warn("Không thể kiểm tra tự động chuyển giao tuần:", err);
+    });
+  }
+
+  checkViewerAutoPromote();
+
+  // ==========================================
+  // 7. LẮNG NGHE DỮ LIỆU TỪ FIREBASE REALTIME
   // ==========================================
   db.on("value", (snapshot) => {
     cachedData = snapshot.val() || {};
