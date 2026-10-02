@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   ${escapeHtml(item.time || "Thời gian linh hoạt")}
                 </span>
               </div>
-              <div class="subject-name">${escapeHtml(item.subject || "")}</div>
+              <div class="subject-name">${formatSubjectDisplay(item.subject || "")}</div>
               <div class="meta-container">
                 ${item.room ? `
                   <div class="meta-item room">
@@ -228,6 +228,18 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
   });
+
+  // Định dạng hiển thị mã môn học nổi bật
+  function formatSubjectDisplay(subjectStr) {
+    if (!subjectStr) return "";
+    const match = subjectStr.match(/^([^\s:]+)\s*:\s*(.+)$/);
+    if (match) {
+      const code = escapeHtml(match[1]);
+      const name = escapeHtml(match[2]);
+      return `<span class="subject-code-tag">${code}</span><span>${name}</span>`;
+    }
+    return escapeHtml(subjectStr);
+  }
 
   // Tiện ích escape chuỗi để tránh XSS
   function escapeHtml(str) {

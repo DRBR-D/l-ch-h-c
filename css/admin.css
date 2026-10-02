@@ -923,3 +923,457 @@ input:focus, select:focus, textarea:focus {
   font-weight: 500;
   text-align: center;
 }
+
+/* =========================================================
+   GỢI Ý CHỌN NHANH MÔN HỌC (HIỆU ỨNG HIỆN ĐẠI & TINH TẾ)
+   ========================================================= */
+
+.quick-subject-container {
+  margin-top: 10px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.quick-subject-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.quick-subject-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.quick-subject-title svg {
+  color: #f59e0b;
+  animation: starPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(5deg); }
+}
+
+.quick-subject-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 1px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+}
+
+/* Bộ chuyển đổi kiểu điền (Mã:Tên / Chỉ Tên / Chỉ Mã) */
+.subject-format-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #e2e8f0;
+  padding: 2.5px;
+  border-radius: 8px;
+}
+
+.format-toggle-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 0 4px 0 6px;
+  user-select: none;
+}
+
+.format-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  user-select: none;
+}
+
+.format-btn:hover {
+  color: #0f172a;
+}
+
+.format-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  transform: scale(1.02);
+}
+
+/* Lưới các thẻ môn học */
+.subject-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .subject-chips-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .format-toggle-label {
+    display: none;
+  }
+}
+
+@media (max-width: 350px) {
+  .subject-chips-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Thẻ Môn Học Tương Tác */
+.subj-chip {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 9px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+  user-select: none;
+  outline: none;
+}
+
+/* Hiệu ứng tia sáng phản chiếu (Shimmer Light) */
+.subj-chip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    transparent 100%
+  );
+  transform: skewX(-22deg);
+  pointer-events: none;
+  transition: none;
+}
+
+.subj-chip:hover::before {
+  left: 150%;
+  transition: left 0.65s ease;
+}
+
+/* Hiệu ứng Hover nâng lên */
+.subj-chip:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+}
+
+/* Hiệu ứng nhấn (Active Press) */
+.subj-chip:active {
+  transform: scale(0.96) translateY(0);
+}
+
+/* Gợn sóng (Ripple) khi click */
+.subj-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.22);
+  transform: scale(0);
+  animation: rippleFx 0.55s ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleFx {
+  to {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+
+/* Nhãn Mã Viết Tắt (Badge) */
+.subj-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  padding: 3px 6px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  letter-spacing: 0.4px;
+  line-height: 1.1;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.subj-chip:hover .subj-badge {
+  transform: scale(1.05);
+}
+
+/* Vùng chứa tên môn học */
+.subj-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.subj-name {
+  font-size: 0.81rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  transition: color 0.15s ease;
+}
+
+.subj-chip:hover .subj-name {
+  color: #0f172a;
+}
+
+.subj-subtext {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin-top: 1px;
+}
+
+/* Dấu tích tròn khi môn được chọn */
+.subj-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  flex-shrink: 0;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+
+.subj-chip.selected .subj-check {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* =========================================================
+   BẢNG MÀU CHUYÊN BIỆT TỪNG MÔN (THEMES)
+   ========================================================= */
+
+/* 1. ATĐ: An toàn điện (Màu Vàng / Cảnh báo điện) */
+.subj-chip.theme-amber .subj-badge {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.subj-chip.theme-amber.selected {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25), 0 4px 12px -2px rgba(245, 158, 11, 0.2);
+}
+.subj-chip.theme-amber.selected .subj-check {
+  background: #f59e0b;
+}
+
+/* 2. ĐTCB: Điện tử cơ bản (Màu Xanh Dương Công Nghệ) */
+.subj-chip.theme-blue .subj-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.subj-chip.theme-blue.selected {
+  background: #eff6ff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25), 0 4px 12px -2px rgba(37, 99, 235, 0.2);
+}
+.subj-chip.theme-blue.selected .subj-check {
+  background: #2563eb;
+}
+
+/* 3. ĐCB: Điện cơ bản (Màu Xanh Cyan Năng Lượng) */
+.subj-chip.theme-cyan .subj-badge {
+  background: #cffafe;
+  color: #0e7490;
+  border: 1px solid #a5f3fc;
+}
+.subj-chip.theme-cyan.selected {
+  background: #ecfeff;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25), 0 4px 12px -2px rgba(6, 182, 212, 0.2);
+}
+.subj-chip.theme-cyan.selected .subj-check {
+  background: #0891b2;
+}
+
+/* 4. QS: Quốc phòng an ninh (Màu Xanh Lục Quân Sự) */
+.subj-chip.theme-emerald .subj-badge {
+  background: #d1fae5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+.subj-chip.theme-emerald.selected {
+  background: #ecfdf5;
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25), 0 4px 12px -2px rgba(16, 185, 129, 0.2);
+}
+.subj-chip.theme-emerald.selected .subj-check {
+  background: #10b981;
+}
+
+/* 5. DT: Tuần dự trữ (Màu Xám Slate Dịu Nhẹ) */
+.subj-chip.theme-slate .subj-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+.subj-chip.theme-slate.selected {
+  background: #f8fafc;
+  border-color: #64748b;
+  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.25), 0 4px 12px -2px rgba(100, 116, 139, 0.2);
+}
+.subj-chip.theme-slate.selected .subj-check {
+  background: #64748b;
+}
+
+/* 6 & 10. @1 & @2: Thi Học Kỳ 1 & 2 (Màu Đỏ Rose Trọng Tâm) */
+.subj-chip.theme-rose .subj-badge {
+  background: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+.subj-chip.theme-rose.selected {
+  background: #fff1f2;
+  border-color: #f43f5e;
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.25), 0 4px 12px -2px rgba(244, 63, 94, 0.2);
+}
+.subj-chip.theme-rose.selected .subj-check {
+  background: #f43f5e;
+}
+
+/* 7. ĐLĐ: Đo lường điện (Màu Tím Thước Đo / Thiết Bị) */
+.subj-chip.theme-purple .subj-badge {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+.subj-chip.theme-purple.selected {
+  background: #faf5ff;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25), 0 4px 12px -2px rgba(168, 85, 247, 0.2);
+}
+.subj-chip.theme-purple.selected .subj-check {
+  background: #a855f7;
+}
+
+/* 8. KTXS: Kỹ thuật xung - số (Màu Lam Đậm Kỹ Thuật Số) */
+.subj-chip.theme-indigo .subj-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+.subj-chip.theme-indigo.selected {
+  background: #eef2ff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25), 0 4px 12px -2px rgba(99, 102, 241, 0.2);
+}
+.subj-chip.theme-indigo.selected .subj-check {
+  background: #6366f1;
+}
+
+/* 9. IPC: Hàn tay điện tử IPC (Màu Cam Mỏ Hàn Nhiệt) */
+.subj-chip.theme-orange .subj-badge {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+.subj-chip.theme-orange.selected {
+  background: #fff7ed;
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25), 0 4px 12px -2px rgba(249, 115, 22, 0.2);
+}
+.subj-chip.theme-orange.selected .subj-check {
+  background: #f97316;
+}
+
+/* =========================================================
+   HIỆU ỨNG NHÁP SÁNG INPUT (GLOW PULSE KHI CHỌN)
+   ========================================================= */
+
+@keyframes inputPulseGlow {
+  0% {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35);
+    background-color: #f0f7ff;
+    transform: scale(1.01);
+  }
+  50% {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    background-color: #ffffff;
+  }
+  100% {
+    border-color: #cbd5e1;
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+
+.input-pulse-glow {
+  animation: inputPulseGlow 0.75s ease-out forwards;
+}
+
+/* Tag mã môn hiển thị trong danh sách đã lưu */
+.subject-code-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  margin-right: 6px;
+  vertical-align: middle;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.4px;
+}

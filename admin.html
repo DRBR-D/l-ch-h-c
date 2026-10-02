@@ -180,9 +180,9 @@
 
             <!-- Gợi ý chọn nhanh -->
             <div class="time-presets">
-              <span class="preset-chip" onclick="setQuickTime('07:00 - 11:30')">Ca Sáng (07:00 - 11:30)</span>
-              <span class="preset-chip" onclick="setQuickTime('13:00 - 17:00')">Ca Chiều (13:00 - 17:00)</span>
-              <span class="preset-chip" onclick="setQuickTime('18:00 - 21:00')">Ca Tối (18:00 - 21:00)</span>
+              <span class="preset-chip" onclick="setQuickTime('06:30 - 11:00')">Ca Sáng (07:00 - 11:30)</span>
+              <span class="preset-chip" onclick="setQuickTime('12:30 - 14:30')">Ca Chiều (13:00 - 17:00)</span>
+              <span class="preset-chip" onclick="setQuickTime('18:00 - 20:00')">Ca Tối (18:00 - 21:00)</span>
             </div>
           </div>
 
@@ -200,6 +200,30 @@
               placeholder="VD: Toán rời rạc, Thực hành mạng..." 
               required
             >
+
+            <!-- GỢI Ý CHỌN NHANH MÔN HỌC (HIỆU ỨNG ĐẸP) -->
+            <div class="quick-subject-container">
+              <div class="quick-subject-header">
+                <div class="quick-subject-title">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span>Gợi ý chọn nhanh môn học</span>
+                  <span class="quick-subject-badge">10 môn</span>
+                </div>
+                <div class="subject-format-toggle" title="Chọn kiểu định dạng tên môn khi bấm">
+                  <span class="format-toggle-label">Kiểu điền:</span>
+                  <button type="button" class="format-btn active" id="fmt-code-name" data-format="code_name" onclick="setSubjectFormat('code_name')">Mã : Tên</button>
+                  <button type="button" class="format-btn" id="fmt-name-only" data-format="name_only" onclick="setSubjectFormat('name_only')">Chỉ Tên</button>
+                  <button type="button" class="format-btn" id="fmt-code-only" data-format="code_only" onclick="setSubjectFormat('code_only')">Chỉ Mã</button>
+                </div>
+              </div>
+
+              <!-- Lưới các thẻ môn học hiệu ứng -->
+              <div class="subject-chips-grid" id="subject-chips-grid">
+                <!-- Được render động từ JavaScript -->
+              </div>
+            </div>
           </div>
 
           <div class="form-group">

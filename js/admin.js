@@ -393,6 +393,180 @@ document.addEventListener("DOMContentLoaded", () => {
   syncTimeUI();
 
   // ==========================================
+  // 2B. GỢI Ý CHỌN NHANH MÔN HỌC (HIỆU ỨNG HIỆN ĐẠI)
+  // ==========================================
+  const QUICK_SUBJECTS = [
+    { code: "ATĐ", name: "An toàn điện", theme: "amber", desc: "An toàn lao động & điện" },
+    { code: "ĐTCB", name: "Điện tử cơ bản", theme: "blue", desc: "Linh kiện & mạch điện tử" },
+    { code: "ĐCB", name: "Điện cơ bản", theme: "cyan", desc: "Nguyên lý điện cơ sở" },
+    { code: "QS", name: "Giáo dục quốc phòng và an ninh", theme: "emerald", desc: "Quốc phòng an ninh" },
+    { code: "DT", name: "Tuần dự trữ", theme: "slate", desc: "Tuần dự phòng / thi bù" },
+    { code: "@1", name: "Thi học kỳ 1", theme: "rose", desc: "Kỳ thi chính thức HK1" },
+    { code: "ĐLĐ", name: "Đo lường điện", theme: "purple", desc: "Thiết bị đo & đo lường" },
+    { code: "KTXS", name: "Kỹ thuật xung - số", theme: "indigo", desc: "Kỹ thuật xung - số" },
+    { code: "IPC", name: "Hàn tay điện tử IPC", theme: "orange", desc: "Kỹ năng hàn chuẩn IPC" },
+    { code: "@2", name: "Thi học kỳ 2", theme: "rose", desc: "Kỳ thi chính thức HK2" }
+  ];
+
+  let currentSubjectFormat = "code_name";
+  try {
+    currentSubjectFormat = localStorage.getItem("admin_subject_format") || "code_name";
+  } catch (e) {}
+
+  let currentSelectedCode = null;
+
+  function getFormattedSubject(item, format = currentSubjectFormat) {
+    if (format === "name_only") return item.name;
+    if (format === "code_only") return item.code;
+    return `${item.code}: ${item.name}`;
+  }
+
+  window.setSubjectFormat = function(format) {
+    currentSubjectFormat = format;
+    try {
+      localStorage.setItem("admin_subject_format", format);
+    } catch (e) {}
+
+    // Cập nhật giao diện nút format
+    document.querySelectorAll(".subject-format-toggle .format-btn").forEach(btn => {
+      if (btn.dataset.format === format) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+
+    // Nếu đang có môn được chọn, cập nhật lại text trong ô input
+    if (currentSelectedCode) {
+      const found = QUICK_SUBJECTS.find(s => s.code === currentSelectedCode);
+      if (found) {
+        const inp = document.getElementById("subject-val");
+        if (inp) {
+          inp.value = getFormattedSubject(found, format);
+          triggerInputGlow(inp);
+        }
+      }
+    }
+  };
+
+  function renderQuickSubjectChips() {
+    const grid = document.getElementById("subject-chips-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    QUICK_SUBJECTS.forEach(subj => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = `subj-chip theme-${subj.theme}`;
+      chip.dataset.code = subj.code;
+      chip.dataset.name = subj.name;
+      chip.title = `${subj.code}: ${subj.name} (${subj.desc})`;
+
+      chip.innerHTML = `
+        <span class="subj-badge">${escapeHtml(subj.code)}</span>
+        <span class="subj-info">
+          <span class="subj-name">${escapeHtml(subj.name)}</span>
+          <span class="subj-subtext">${escapeHtml(subj.desc)}</span>
+        </span>
+        <span class="subj-check">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+      `;
+
+      chip.addEventListener("click", (e) => {
+        createRipple(e, chip);
+        selectQuickSubject(subj, chip);
+      });
+
+      grid.appendChild(chip);
+    });
+
+    // Đồng bộ nút định dạng ban đầu
+    document.querySelectorAll(".subject-format-toggle .format-btn").forEach(btn => {
+      if (btn.dataset.format === currentSubjectFormat) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+
+  function createRipple(e, el) {
+    const rect = el.getBoundingClientRect();
+    const circle = document.createElement("span");
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - rect.left - radius}px`;
+    circle.style.top = `${e.clientY - rect.top - radius}px`;
+    circle.classList.add("subj-ripple");
+
+    const existing = el.querySelector(".subj-ripple");
+    if (existing) existing.remove();
+
+    el.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  }
+
+  function triggerInputGlow(inputEl) {
+    inputEl.classList.remove("input-pulse-glow");
+    void inputEl.offsetWidth; // Force reflow
+    inputEl.classList.add("input-pulse-glow");
+  }
+
+  function selectQuickSubject(subj, chipEl) {
+    currentSelectedCode = subj.code;
+    const inp = document.getElementById("subject-val");
+    const formatted = getFormattedSubject(subj, currentSubjectFormat);
+
+    if (inp) {
+      inp.value = formatted;
+      triggerInputGlow(inp);
+      inp.focus();
+    }
+
+    document.querySelectorAll(".subj-chip").forEach(c => c.classList.remove("selected"));
+    if (chipEl) {
+      chipEl.classList.add("selected");
+    }
+
+    showToast(`Đã chọn: ${formatted}`, "normal");
+  }
+
+  function syncChipsWithSubject(subjectText) {
+    currentSelectedCode = null;
+    const s = (subjectText || "").trim().toLowerCase();
+    document.querySelectorAll(".subj-chip").forEach(c => {
+      const code = (c.dataset.code || "").toLowerCase();
+      const name = (c.dataset.name || "").toLowerCase();
+      if (
+        s === name ||
+        s === `${code}: ${name}` ||
+        s === `${code} - ${name}` ||
+        s === code
+      ) {
+        c.classList.add("selected");
+        currentSelectedCode = c.dataset.code;
+      } else {
+        c.classList.remove("selected");
+      }
+    });
+  }
+
+  // Khởi tạo hiển thị các môn
+  renderQuickSubjectChips();
+
+  const subjectInputEl = document.getElementById("subject-val");
+  if (subjectInputEl) {
+    subjectInputEl.addEventListener("input", () => {
+      syncChipsWithSubject(subjectInputEl.value);
+    });
+  }
+
+  // ==========================================
   // 3. Khởi tạo thanh lọc ngày trong danh sách
   // ==========================================
   function setupAdminFilterTabs() {
@@ -505,6 +679,10 @@ document.addEventListener("DOMContentLoaded", () => {
     startTime = "07:00";
     endTime = "11:30";
     syncTimeUI();
+
+    // Reset chọn nhanh môn học
+    currentSelectedCode = null;
+    document.querySelectorAll(".subj-chip").forEach(c => c.classList.remove("selected"));
   };
 
   // ==========================================
@@ -528,6 +706,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("subject-val").value = item.subject || "";
     document.getElementById("room-val").value = item.room || "";
     document.getElementById("note-val").value = item.note || "";
+
+    // Đồng bộ thẻ môn học khi sửa
+    syncChipsWithSubject(item.subject || "");
 
     // Đổi giao diện nút và tiêu đề
     document.getElementById("form-title").innerHTML = `
@@ -572,6 +753,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Định dạng hiển thị mã môn học nổi bật
+  function formatSubjectDisplay(subjectStr) {
+    if (!subjectStr) return "";
+    const match = subjectStr.match(/^([^\s:]+)\s*:\s*(.+)$/);
+    if (match) {
+      const code = escapeHtml(match[1]);
+      const name = escapeHtml(match[2]);
+      return `<span class="subject-code-tag">${code}</span><span>${name}</span>`;
+    }
+    return escapeHtml(subjectStr);
+  }
+
   // ==========================================
   // 7. Render danh sách các mục đã lưu
   // ==========================================
@@ -598,7 +791,7 @@ document.addEventListener("DOMContentLoaded", () => {
         row.innerHTML = `
           <div class="item-details">
             <span class="item-day-tag">${day}</span>
-            <div class="item-title-text">${escapeHtml(item.subject)}</div>
+            <div class="item-title-text">${formatSubjectDisplay(item.subject)}</div>
             <div class="item-meta-text">
               <span class="meta-tag time">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
