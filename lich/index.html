@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch Học</title>
+  <meta name="description" content="Lịch học rõ ràng, trực quan và dễ theo dõi">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  
+  <!-- Firebase SDK v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-main">
+        <h1 class="header-title">Lịch Học</h1>
+        <p class="header-date" id="live-date">Đang tải ngày...</p>
+      </div>
+      
+      <!-- NÚT ĐỔI CỠ CHỮ -->
+      <button type="button" class="btn-zoom-text" id="btn-zoom" onclick="toggleZoom()" title="Đổi cỡ chữ">
+        <span class="zoom-icon">Aa</span>
+        <span class="zoom-label" id="zoom-label">Chữ to</span>
+      </button>
+    </header>
+
+    <!-- NÚT CHUYỂN HÔM NAY / CẢ TUẦN -->
+    <div class="switch-tabs">
+      <button type="button" class="switch-tab-btn active" id="tab-today" onclick="switchView('today')">
+        Hôm Nay
+      </button>
+      <button type="button" class="switch-tab-btn" id="tab-all" onclick="switchView('all')">
+        Cả Tuần
+      </button>
+    </div>
+
+    <!-- THANH LỌC THỨ -->
+    <nav class="days-bar" id="days-bar" style="display: none;" aria-label="Chọn thứ">
+      <!-- Nút Thứ 2 đến Chủ Nhật -->
+    </nav>
+
+    <!-- NỘI DUNG LỊCH HỌC -->
+    <main class="schedule-content" id="schedule-container">
+      <div class="state-card">
+        <div class="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+    </main>
+
+    <!-- CHÂN TRANG -->
+    <footer class="app-footer">
+      <a href="./admin.html" class="admin-link">Quản lý lịch học</a>
+    </footer>
+  </div>
+
+  <script src="./js/firebase-config.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Lịch Học</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/admin.css">
+
+  <!-- Firebase SDK v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+  <div class="admin-wrapper">
+
+    <!-- =========================================
+         1. ĐĂNG NHẬP MÃ PIN (Mặc định: 132008)
+         ========================================= -->
+    <div class="admin-card auth-box" id="auth-box">
+      <div class="auth-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <h1 class="auth-title">Đăng Nhập Quản Lý</h1>
+      <p class="auth-desc">Nhập mã PIN để chỉnh sửa lịch học</p>
+
+      <div class="pin-group">
+        <input 
+          type="password" 
+          id="pin-field" 
+          class="pin-input" 
+          placeholder="••••••" 
+          maxlength="12" 
+          autocomplete="off"
+          autofocus
+        >
+        <p class="auth-error" id="auth-error">Mã PIN không đúng. Vui lòng thử lại.</p>
+      </div>
+
+      <button type="button" class="btn-primary" onclick="unlock()">Vào Quản Lý</button>
+
+      <div style="margin-top: 16px;">
+        <a href="./index.html" class="nav-back-link">← Quay lại trang xem lịch</a>
+      </div>
+    </div>
+
+    <!-- =========================================
+         2. BẢNG ĐIỀU KHIỂN QUẢN LÝ
+         ========================================= -->
+    <div id="admin-panel" style="display: none;">
+      
+      <!-- THANH ĐIỀU HƯỚNG TRÊN -->
+      <header class="admin-topbar">
+        <div class="topbar-title">Quản Lý Lịch Học</div>
+        <div class="topbar-actions">
+          <a href="./index.html" class="btn-topbar">Xem Lịch</a>
+          <button type="button" class="btn-topbar logout" onclick="logout()">Đăng Xuất</button>
+        </div>
+      </header>
+
+      <!-- CHỌN TUẦN & NÚT [+] THÊM TUẦN MỚI (TUẦN NÀY, TUẦN SAU, TUẦN 3, TUẦN 4...) -->
+      <div class="week-bar-container">
+        <div class="week-tabs-scroll" id="week-tabs-list">
+          <!-- Render động các tab: Tuần Này, Tuần Sau, Tuần 3... -->
+        </div>
+        <button type="button" class="btn-add-week" onclick="promptAddNewWeek()" title="Thêm tuần mới (Tuần 3, Tuần 4...)">
+          <span>+ Thêm Tuần</span>
+        </button>
+      </div>
+
+      <!-- THANH CÔNG CỤ TÁC VỤ TUẦN -->
+      <div class="week-tools-bar" id="week-tools-bar">
+        <!-- Render động các nút theo tuần đang chọn: Sao chép, Áp dụng, Xóa... -->
+      </div>
+
+      <!-- KHUNG 1: FORM THÊM / SỬA TIẾT HỌC -->
+      <section class="admin-card form-card">
+        <h2 class="section-title" id="form-title">Thêm Tiết Học Mới</h2>
+        
+        <form id="schedule-form">
+          <div class="form-grid">
+            
+            <!-- THỨ TRONG TUẦN -->
+            <div class="form-group">
+              <label for="day-val">Thứ trong tuần:</label>
+              <select id="day-val" required>
+                <option value="Thứ Hai">Thứ Hai</option>
+                <option value="Thứ Ba">Thứ Ba</option>
+                <option value="Thứ Tư">Thứ Tư</option>
+                <option value="Thứ Năm">Thứ Năm</option>
+                <option value="Thứ Sáu">Thứ Sáu</option>
+                <option value="Thứ Bảy">Thứ Bảy</option>
+                <option value="Chủ Nhật">Chủ Nhật</option>
+              </select>
+            </div>
+
+            <!-- GIỜ HỌC -->
+            <div class="form-group">
+              <label>Giờ học:</label>
+              
+              <!-- Khung chọn giờ Từ - Đến trực quan -->
+              <div class="time-picker-row">
+                <div class="time-box">
+                  <span class="time-tag">Từ:</span>
+                  <input type="time" id="time-start" value="18:00" onchange="syncTimeFromPickers()">
+                </div>
+                <span class="time-arrow">➔</span>
+                <div class="time-box">
+                  <span class="time-tag">Đến:</span>
+                  <input type="time" id="time-end" value="20:00" onchange="syncTimeFromPickers()">
+                </div>
+              </div>
+
+              <!-- Ô hiển thị kết quả -->
+              <input 
+                type="text" 
+                id="time-val" 
+                value="18:00 - 20:00" 
+                placeholder="Ví dụ: 18:00 - 20:00" 
+                oninput="syncPickersFromTimeInput()"
+                required
+              >
+
+              <!-- Nút chọn nhanh giờ -->
+              <div class="preset-times">
+                <button type="button" class="preset-btn" onclick="setPresetTime('07:30', '11:00')">☀️ Sáng: 07:30 - 11:00</button>
+                <button type="button" class="preset-btn" onclick="setPresetTime('12:30', '16:30')">🌤️ Chiều: 12:30 - 16:30</button>
+                <button type="button" class="preset-btn" onclick="setPresetTime('18:00', '20:00')">🌙 Tối: 18:00 - 20:00</button>
+              </div>
+            </div>
+
+            <!-- TÊN MÔN HỌC -->
+            <div class="form-group">
+              <label for="subject-val">Tên môn học:</label>
+              <input 
+                type="text" 
+                id="subject-val" 
+                placeholder="Ví dụ: Tin Học, Điện tử cơ bản..." 
+                required
+              >
+            </div>
+
+            <!-- PHÒNG HỌC (TÙY CHỌN) -->
+            <div class="form-group">
+              <label for="room-val">Phòng học (nếu có):</label>
+              <input 
+                type="text" 
+                id="room-val" 
+                placeholder="Ví dụ: F7.8, F6.4 (bỏ trống nếu không có)"
+              >
+            </div>
+
+          </div>
+
+          <!-- NÚT BẤM -->
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="btn-submit">Lưu Tiết Học</button>
+            <button type="button" class="btn-secondary" id="btn-cancel" onclick="resetForm()" style="display: none;">Hủy Sửa</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- KHUNG 2: DANH SÁCH LỊCH HỌC HIỆN TẠI -->
+      <section class="admin-card list-card">
+        <div class="list-header">
+          <h2 class="section-title" id="list-title">Danh Sách Môn Học (Tuần Này)</h2>
+        </div>
+
+        <!-- LỌC THEO THỨ -->
+        <nav class="filter-bar" id="filter-bar">
+          <!-- Render các nút Thứ 2 đến CN -->
+        </nav>
+
+        <!-- NƠI HIỂN THỊ DANH SÁCH -->
+        <div id="items-list" class="items-list">
+          <div class="empty-state">Đang tải danh sách...</div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- TOAST THÔNG BÁO -->
+    <div id="toast" class="toast"></div>
+
+  </div>
+
+  <script src="./js/firebase-config.js"></script>
+  <script src="./js/admin.js"></script>
+</body>
+</html>

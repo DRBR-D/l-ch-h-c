@@ -1,0 +1,486 @@
+/* =========================================================
+   STYLE.CSS - Giao diện Lịch Học Siêu Dễ Coi Dành Cho Mẹ
+   Đặc điểm: Chữ To, Rõ Nét, Tương Phản Cao, Dễ Đọc Mọi Lúc
+   ========================================================= */
+
+:root {
+  --font-base: 17.5px;
+
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --divider: #f1f5f9;
+
+  --text-main: #0f172a;       /* Đen tuyền sắc nét */
+  --text-sub: #334155;        /* Xám than đậm */
+  --text-muted: #64748b;      /* Xám trung tính */
+
+  --primary: #1e3a8a;         /* Xanh navy đậm trang nhã */
+  --accent: #2563eb;          /* Xanh dương tươi sáng */
+  
+  --morning-color: #b45309;   /* Cam sáng ấm */
+  --morning-bg: #fffbeb;
+  --morning-border: #fde68a;
+
+  --afternoon-color: #0369a1; /* Xanh da trời */
+  --afternoon-bg: #f0f9ff;
+  --afternoon-border: #bae6fd;
+
+  --evening-color: #6d28d9;   /* Tím đậm tối */
+  --evening-bg: #f5f3ff;
+  --evening-border: #ddd6fe;
+
+  --today-border: #3b82f6;
+  --today-bg: #eff6ff;
+  --today-text: #1d4ed8;
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-full: 999px;
+
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   CHẾ ĐỘ CHỮ LỚN CHO MẮT YẾU (BẬT QUA NÚT A+)
+   ========================================================= */
+body.zoom-mode {
+  --font-base: 20.5px;
+}
+
+body.zoom-mode .header-title {
+  font-size: 1.85rem;
+}
+
+body.zoom-mode .class-time-val {
+  font-size: 1.55rem;
+}
+
+body.zoom-mode .class-subject-title {
+  font-size: 1.35rem;
+}
+
+body.zoom-mode .switch-tab-btn {
+  font-size: 1.15rem;
+  padding: 14px 20px;
+}
+
+/* =========================================================
+   RESET & CƠ BẢN
+   ========================================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--font-base);
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: 18px 14px 50px;
+}
+
+.app-container {
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   TIÊU ĐỀ ĐẦU TRANG
+   ========================================================= */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 4px 2px;
+}
+
+.header-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.4px;
+}
+
+.header-date {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-top: 3px;
+}
+
+/* NÚT A+ PHÓNG TO CHỮ */
+.btn-zoom-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-zoom-text:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-zoom-text.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.zoom-icon {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+/* =========================================================
+   2 NÚT CHUYỂN ĐỔI TO RÕ: HÔM NAY / CẢ TUẦN
+   ========================================================= */
+.switch-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.switch-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-sub);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.switch-tab-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.switch-tab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+}
+
+/* =========================================================
+   THANH LỌC THỨ (KHI XEM CẢ TUẦN)
+   ========================================================= */
+.days-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  scrollbar-width: none;
+}
+
+.days-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.day-chip-btn {
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-sub);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.day-chip-btn:hover {
+  border-color: var(--accent);
+}
+
+.day-chip-btn.active {
+  background: var(--text-main);
+  color: #ffffff;
+  border-color: var(--text-main);
+}
+
+.day-chip-btn.is-today-chip {
+  border-color: var(--today-border);
+  color: var(--accent);
+}
+
+/* =========================================================
+   THẺ HIỂN THỊ LỊCH HỌC
+   ========================================================= */
+.schedule-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* KHUNG LỊCH TỪNG NGÀY */
+.day-block {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.day-block.is-today-block {
+  border-color: var(--today-border);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+}
+
+/* TIÊU ĐỀ CỦA NGÀY */
+.day-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f1f5f9;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.day-block.is-today-block .day-block-header {
+  background: var(--today-bg);
+  border-bottom-color: var(--today-border);
+}
+
+.day-block-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.today-star-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.2px;
+}
+
+/* DANH SÁCH CÁC TIẾT HỌC TRONG NGÀY */
+.day-classes-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.class-card-item {
+  padding: 16px 18px;
+  border-bottom: 1.5px solid var(--divider);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.class-card-item:last-child {
+  border-bottom: none;
+}
+
+/* DÒNG 1: BUỔI & GIỜ HỌC (TO ĐÙNG, NỔI BẬT) */
+.class-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.class-session-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.2px;
+}
+
+.session-morning {
+  background: var(--morning-bg);
+  color: var(--morning-color);
+  border: 1px solid var(--morning-border);
+}
+
+.session-afternoon {
+  background: var(--afternoon-bg);
+  color: var(--afternoon-color);
+  border: 1px solid var(--afternoon-border);
+}
+
+.session-evening {
+  background: var(--evening-bg);
+  color: var(--evening-color);
+  border: 1px solid var(--evening-border);
+}
+
+.class-time-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.4px;
+}
+
+/* DÒNG 2: MÔN HỌC & PHÒNG HỌC */
+.class-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.class-subject-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.35;
+}
+
+.class-room-badge {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* THẺ TRẠNG THÁI NGHỈ HỌC */
+.day-off-card {
+  padding: 22px 18px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.today-off-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.today-off-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.today-off-desc {
+  font-size: 1.05rem;
+  color: var(--text-sub);
+  margin-bottom: 18px;
+}
+
+.btn-see-week {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.btn-see-week:hover {
+  opacity: 0.9;
+}
+
+/* THẺ LOADING HOẶC BÁO LỖI */
+.state-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  box-shadow: var(--shadow);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   CHÂN TRANG
+   ========================================================= */
+.app-footer {
+  margin-top: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sync-text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.admin-link {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.admin-link:hover {
+  color: var(--text-main);
+}

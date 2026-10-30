@@ -1,0 +1,716 @@
+/* =========================================================
+   ADMIN.CSS - Bảng Điều Khiển Quản Lý Gọn Gàng & Đầy Đủ
+   ========================================================= */
+
+:root {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --border-focus: #3b82f6;
+  --divider: #f1f5f9;
+
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --text-muted: #94a3b8;
+
+  --primary: #1e3a8a;
+  --primary-hover: #1e40af;
+  --accent: #2563eb;
+  
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+
+  --radius-lg: 14px;
+  --radius-md: 8px;
+  --radius-full: 999px;
+
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: 24px 16px 60px;
+}
+
+.admin-wrapper {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   1. MÀN HÌNH ĐĂNG NHẬP PIN
+   ========================================================= */
+.auth-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  margin-top: 40px;
+}
+
+.auth-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: #eff6ff;
+  color: var(--accent);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.auth-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.auth-desc {
+  font-size: 0.95rem;
+  color: var(--text-sub);
+  margin-bottom: 20px;
+}
+
+.pin-group {
+  margin-bottom: 20px;
+}
+
+.pin-input {
+  width: 100%;
+  max-width: 240px;
+  padding: 12px 16px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 6px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.pin-input:focus {
+  border-color: var(--border-focus);
+}
+
+.auth-error {
+  display: none;
+  color: var(--danger);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.nav-back-link {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nav-back-link:hover {
+  color: var(--accent);
+}
+
+/* =========================================================
+   2. THANH TIÊU ĐỀ ADMIN
+   ========================================================= */
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 4px 2px;
+}
+
+.topbar-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-topbar {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+}
+
+.btn-topbar:hover {
+  border-color: #cbd5e1;
+}
+
+.btn-topbar.logout {
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.btn-topbar.logout:hover {
+  background: var(--danger-bg);
+}
+
+/* =========================================================
+   3. THANH CUỘN CHỌN TUẦN & NÚT [+] THÊM TUẦN
+   ========================================================= */
+.week-bar-container {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.week-tabs-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  flex: 1;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.week-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.week-tab-btn {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  min-width: 130px;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.week-tab-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.week-tab-btn.active {
+  border-color: var(--accent);
+  background: #f0f7ff;
+}
+
+.week-tab-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.week-tab-btn.active .week-tab-title {
+  color: var(--accent);
+}
+
+.week-tab-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Nút xóa tuần tự thêm */
+.btn-delete-week-tab {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.btn-delete-week-tab:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Nút [+] Thêm Tuần */
+.btn-add-week {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 2px dashed #93c5fd;
+  color: var(--accent);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-add-week:hover {
+  background: #eff6ff;
+  border-color: var(--accent);
+}
+
+/* =========================================================
+   4. CÔNG CỤ TÁC VỤ TUẦN
+   ========================================================= */
+.week-tools-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-sub);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+}
+
+.tool-btn:hover {
+  border-color: #cbd5e1;
+  color: var(--text-main);
+}
+
+.tool-btn.primary {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.tool-btn.primary:hover {
+  background: var(--primary-hover);
+}
+
+.tool-btn.copy-btn {
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.tool-btn.copy-btn:hover {
+  background: #dbeafe;
+}
+
+.tool-btn.apply-btn {
+  color: #15803d;
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.tool-btn.apply-btn:hover {
+  background: #dcfce7;
+}
+
+.tool-btn.danger {
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.tool-btn.danger:hover {
+  background: var(--danger-bg);
+}
+
+/* =========================================================
+   5. KHUNG FORM THÊM / SỬA TIẾT HỌC
+   ========================================================= */
+.admin-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-main);
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--border-focus);
+}
+
+/* BỘ CHỌN GIỜ TRỰC QUAN (TỪ ➔ ĐẾN) */
+.time-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.time-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  background: #f1f5f9;
+  border: 1.5px solid var(--border);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+}
+
+.time-tag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.time-box input[type="time"] {
+  border: none;
+  background: transparent;
+  padding: 2px 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+}
+
+.time-arrow {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* NÚT CHỌN NHANH GIỜ HỌC */
+.preset-times {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.preset-btn {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+/* NÚT HÀNH ĐỘNG FORM */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: #f1f5f9;
+  color: var(--text-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+/* =========================================================
+   6. DANH SÁCH LỊCH HỌC HIỆN TẠI
+   ========================================================= */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-sub);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.filter-btn.active {
+  background: var(--text-main);
+  border-color: var(--text-main);
+  color: #ffffff;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.day-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.day-group-header {
+  background: #f8fafc;
+  padding: 10px 14px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.day-count {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.day-group-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.item-time {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.item-subject {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.item-room {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.btn-action.edit {
+  color: var(--accent);
+  border-color: #bfdbfe;
+}
+
+.btn-action.edit:hover {
+  background: #eff6ff;
+}
+
+.btn-action.delete {
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.btn-action.delete:hover {
+  background: var(--danger-bg);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* =========================================================
+   7. TOAST THÔNG BÁO
+   ========================================================= */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
